@@ -51,6 +51,7 @@ Nesta unidade, aprenderemos sobre:
 - [Documentação do PostgreSQL](https://www.postgresql.org/docs/)
 - [Documentação do MySQL](https://dev.mysql.com/doc/)
 - [Documentação do Oracle Database](https://docs.oracle.com/en/database/)
+- [Documentação do SQL Server](https://docs.microsoft.com/pt-br/sql/sql-server/)
 
 ## Como Contribuir
 
