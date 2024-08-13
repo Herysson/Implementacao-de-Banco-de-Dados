@@ -1,6 +1,10 @@
-CREATE DATABASE IF NOT EXISTS EMPRESA;
-#Criação da tabela FUNCIONARIO
-CREATE TABLE EMPRESA.FUNCIONARIO (
+
+CREATE DATABASE EMPRESA;
+USE EMPRESA;
+GO
+	
+--Criação da tabela FUNCIONARIO
+CREATE TABLE FUNCIONARIO (
 	Pnome VARCHAR(15) NOT NULL,
     Minicial CHAR,
     Unome VARCHAR(15) NOT NULL,
@@ -14,9 +18,10 @@ CREATE TABLE EMPRESA.FUNCIONARIO (
     PRIMARY KEY (Cpf),
     FOREIGN KEY (Cpf_supervisor) REFERENCES FUNCIONARIO(Cpf)
 );
+GO
 
-#Tablea de DEPARTAMENTO
-CREATE TABLE EMPRESA.DEPARTAMENTO (
+--Tablea de DEPARTAMENTO
+CREATE TABLE DEPARTAMENTO (
 	Dnome VARCHAR(15) NOT NULL,
     Dnumero INT,
     Cpf_gerente CHAR(11),
@@ -26,22 +31,22 @@ CREATE TABLE EMPRESA.DEPARTAMENTO (
     FOREIGN KEY (Cpf_gerente) REFERENCES FUNCIONARIO(CPF)
 );
 
-#Adiconando restição referencial em FUNCIONARO de DEPARTAMENTO
-#Criando uma ALTERAÇÃO de Tabela
-ALTER TABLE EMPRESA.FUNCIONARIO
+--Adiconando restição referencial em FUNCIONARO de DEPARTAMENTO
+--Criando uma ALTERAÇÃO de Tabela
+ALTER TABLE FUNCIONARIO
 ADD CONSTRAINT Dnr
 FOREIGN KEY (Dnr) REFERENCES DEPARTAMENTO (Dnumero);
 
-#Criação da tabela de LOCALIZACAO_DEP
-CREATE TABLE EMPRESA.LOCALIZACAO_DEP (
+--Criação da tabela de LOCALIZACAO_DEP
+CREATE TABLE LOCALIZACAO_DEP (
 	Dnumero INT NOT NULL,
 	Dlocal VARCHAR (15) NOT NULL,
     PRIMARY KEY (Dnumero, Dlocal),
     FOREIGN KEY (Dnumero) REFERENCES DEPARTAMENTO (Dnumero)
 );
 
-#Criacao da tabela PROJETO
-CREATE TABLE EMPRESA.PROJETO(
+--Criacao da tabela PROJETO
+CREATE TABLE PROJETO(
 	Projnome VARCHAR (15) NOT NULL,
 	Projnumero INT NOT NULL,
     Projlocal VARCHAR(15),
@@ -51,8 +56,8 @@ CREATE TABLE EMPRESA.PROJETO(
     FOREIGN KEY (Dnum) REFERENCES DEPARTAMENTO (Dnumero)
 );
 
-#Criação da tabela TRABALHA_EM
-CREATE TABLE EMPRESA.TRABALHA_EM(
+--Criação da tabela TRABALHA_EM
+CREATE TABLE TRABALHA_EM(
 	Fcpf CHAR(11) NOT NULL,
     Pnr INT NOT NULL,
     Horas DECIMAL (3,1) NOT NULL,
@@ -61,9 +66,7 @@ CREATE TABLE EMPRESA.TRABALHA_EM(
     FOREIGN KEY (Pnr) REFERENCES PROJETO(Projnumero)
 );
 
-#Selecionando o esquema para criação da tabela
-USE EMPRESA;
-#Criação da tabela DEPENDENTE sem seleção do esquema
+--Criação da tabela DEPENDENTE sem seleção do esquema
 CREATE TABLE DEPENDENTE(
 	Fcpf CHAR(11) NOT NULL,
     Nome_dependente VARCHAR(15) NOT NULL,
@@ -74,12 +77,13 @@ CREATE TABLE DEPENDENTE(
     FOREIGN KEY (Fcpf) REFERENCES FUNCIONARIO(Cpf)
 );
 
-#Inserindo valores no Departamento
+--Inserindo valores no Departamento
 INSERT INTO DEPARTAMENTO (Dnome, Dnumero) VALUES('Pesquisa', 5);
 INSERT INTO DEPARTAMENTO (Dnome, Dnumero) VALUES('Administração', 4);
 INSERT INTO DEPARTAMENTO (Dnome, Dnumero) VALUES('Matriz', 1);
 SELECT * FROM DEPARTAMENTO;
-#Inserindo funcionarios com cargo de gerencia DATE AAAA-MM-DD
+
+--Inserindo funcionarios com cargo de gerencia DATE AAAA-MM-DD
 INSERT INTO FUNCIONARIO VALUES ( 'Jorge', 'E', 'Brito', '88866555576', '1937-11-10', 'Rua do Horto, 35, São Paulo, SP', 'M', 55000, NULL , 1 );
 INSERT INTO FUNCIONARIO VALUES ( 'Jennifer', 'S', 'Souza', '98765432168', '1941-06-20', 'Av Arthur de Lima, 54, Santo André, SP', 'F', 43000, '88866555576' , 4 );
 INSERT INTO FUNCIONARIO VALUES ( 'Fernando', 'T', 'Wong', '33344555587', '1955-12-08', 'Rua da Lapa, 34, São Paulo, SP', 'M', 40000, '88866555576' , 5 );
@@ -89,14 +93,15 @@ INSERT INTO FUNCIONARIO VALUES ( 'Ronaldo', 'K', 'Lima', '66688444476', '1962-09
 INSERT INTO FUNCIONARIO VALUES ( 'Joice', 'A', 'Leite', '45345345376', '1972-07-31', 'Av. Lucas Obes, 74, São Paulo, SP', 'F', 25000, '33344555587' , 5 );
 INSERT INTO FUNCIONARIO VALUES ( 'André', 'E', 'Brito', '98798798733', '1969-03-29', 'Rua Timbira, 35, São Paulo, SP', 'M', 25000, '98765432168' , 4 );
 
-#Corrigindo erro de inserção
+--Corrigindo erro de inserção
 UPDATE FUNCIONARIO
 SET Endereco = 'Rua Reboucas, 65, Piracicaba, SP'
 WHERE Cpf = '66688444476';
-#Recupera todas as informações de funcionários
+
+--Recupera todas as informações de funcionários
 SELECT * FROM FUNCIONARIO;
 
-#Finzalindo o preenchimento da tabela DEPTARTAMENTO
+--Finzalindo o preenchimento da tabela DEPTARTAMENTO
 UPDATE DEPARTAMENTO
 SET Cpf_gerente = '33344555587', Data_inicio_gerente = '1988-05-22'
 WHERE Dnumero = 5;
@@ -106,29 +111,29 @@ WHERE Dnumero = 4;
 UPDATE DEPARTAMENTO
 SET Cpf_gerente = '88866555576', Data_inicio_gerente = '1981-06-19'
 WHERE Dnumero = 1;
-#Recuperar todas as informações de departamento
+--Recuperar todas as informações de departamento
 SELECT * FROM DEPARTAMENTO;
 
-#Prrencher a tabela LOCALIZACAO_DEP
+--Prrencher a tabela LOCALIZACAO_DEP
 INSERT INTO LOCALIZACAO_DEP VALUES (1, 'São Paulo');
 INSERT INTO LOCALIZACAO_DEP VALUES (4, 'Mauá');
 INSERT INTO LOCALIZACAO_DEP VALUES (5, 'Santo André');
 INSERT INTO LOCALIZACAO_DEP VALUES (5, 'Itu');
 INSERT INTO LOCALIZACAO_DEP VALUES (5, 'São Paulo');
-#Recuperando informações de LOCALIZACAO_DEP
+--Recuperando informações de LOCALIZACAO_DEP
 SELECT * FROM LOCALIZACAO_DEP;
 
-#Preenchendo a table PROJETO
+--Preenchendo a table PROJETO
 INSERT INTO PROJETO VALUES ('ProdutoX', 1, 'Santo André', 5);
 INSERT INTO PROJETO VALUES ('ProdutoY', 2, 'Itu', 5);
 INSERT INTO PROJETO VALUES ('ProdutoZ', 3, 'São Paulo', 5);
 INSERT INTO PROJETO VALUES ('Informatização', 10, 'Mauá', 4);
 INSERT INTO PROJETO VALUES ('Reorganização', 20, 'São Paulo', 1);
 INSERT INTO PROJETO VALUES ('Novosbenefícios', 30, 'Mauá', 4);
-#Recuperando informações de PROJETO
+--Recuperando informações de PROJETO
 SELECT * FROM PROJETO;
 
-#Preenchento TRABALHA_EM
+--Preenchento TRABALHA_EM
 INSERT INTO TRABALHA_EM VALUES ('12345678966',1,32.5);
 INSERT INTO TRABALHA_EM VALUES ('12345678966',2,7.5);
 INSERT INTO TRABALHA_EM VALUES ('66688444476',3,40);
@@ -145,7 +150,7 @@ INSERT INTO TRABALHA_EM VALUES ('98798798733',30,5);
 INSERT INTO TRABALHA_EM VALUES ('98765432168',30,20);
 INSERT INTO TRABALHA_EM VALUES ('98765432168',20,15);
 
-#Preenchendo a tabela de DEPENDENTES
+--Preenchendo a tabela de DEPENDENTES
 INSERT INTO DEPENDENTE VALUES ('33344555587', 'Alicia', 'F', '1986-04-05', 'Filha');
 INSERT INTO DEPENDENTE VALUES ('33344555587', 'Tiago', 'M', '1983-10-25', 'Filh0');
 INSERT INTO DEPENDENTE VALUES ('33344555587', 'Janaina', 'F', '1958-05-03', 'Eposa');
