@@ -6,7 +6,7 @@
 
 ## 3. Nome do vendedor e a quantidade de vendas
 
-## 4. Vendas maiores ou iguais a 100
+## 4. Nome dos vendedores com a quantidade de vendas maiores ou iguais a 100
 
 ## 5. Nome do vendedor e a quantidade de territórios vinculados
 
