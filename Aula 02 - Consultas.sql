@@ -148,3 +148,27 @@ JOIN TRABALHA_EM AS T2
 	ON T1.Pnr = T2.Pnr
 	AND T1.Horas = T2.Horas
 WHERE T2.Fcpf = '33344555587';
+
+
+SELECT 
+    f.Pnome,
+    f.Unome,
+    te.Pnr,
+    te.Horas
+FROM 
+    FUNCIONARIO f
+JOIN 
+    TRABALHA_EM te ON f.Cpf = te.Fcpf
+JOIN 
+    TRABALHA_EM te_f ON te.Pnr = te_f.Pnr AND te.Horas = te_f.Horas
+JOIN 
+    FUNCIONARIO f_f ON te_f.Fcpf = f_f.Cpf
+WHERE 
+    f_f.Pnome = 'Fernando';
+
+/*
+JOIN FUNCIONARIO f ON f.Cpf = te.Fcpf: Relaciona os funcionários com os registros de trabalho (TRABALHA_EM).
+JOIN TRABALHA_EM te_f ON te.Pnr = te_f.Pnr AND te.Horas = te_f.Horas: Faz o JOIN de TRABALHA_EM com ele mesmo para verificar se o projeto (Pnr) e as horas (Horas) são iguais para ambos os funcionários.
+JOIN FUNCIONARIO f_f ON te_f.Fcpf = f_f.Cpf: Une a tabela FUNCIONARIO novamente para garantir que estamos comparando com os dados do funcionário "Fernando".
+WHERE f_f.Pnome = 'Fernando': Filtra os resultados para garantir que estamos comparando com o funcionário "Fernando".
+*/
