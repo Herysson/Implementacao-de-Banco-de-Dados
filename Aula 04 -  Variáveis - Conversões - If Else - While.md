@@ -111,6 +111,67 @@ ELSE
     PRINT 'O valor é 5 ou menor';
 ```
 
+### Verificando se um Banco de Dados já Existe
+
+Para verificar se um banco de dados já existe antes de criá-lo, você pode usar a seguinte estrutura:
+
+```sql
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'NomeDoBancoDeDados')
+BEGIN
+    CREATE DATABASE NomeDoBancoDeDados;
+END;
+```
+
+### Verificando se uma Tabela já Existe
+
+Para verificar se uma tabela já existe antes de criá-la, use a seguinte estrutura:
+
+```sql
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'NomeDaTabela') AND type in (N'U'))
+BEGIN
+    CREATE TABLE NomeDaTabela (
+        -- Definição das colunas
+    );
+END;
+```
+
+### Exemplo Completo
+
+Vamos supor que você queira criar um banco de dados chamado `MinhaEscola` e uma tabela chamada `Aluno`. Aqui está como você pode fazer isso, verificando se ambos já existem:
+
+#### Verificando e Criando o Banco de Dados:
+
+```sql
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'MinhaEscola')
+BEGIN
+    CREATE DATABASE MinhaEscola;
+END;
+```
+
+#### Verificando e Criando a Tabela `Aluno`:
+
+```sql
+USE MinhaEscola;
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'Aluno') AND type in (N'U'))
+BEGIN
+    CREATE TABLE Aluno (
+        Numero_aluno INT PRIMARY KEY,
+        Nome NVARCHAR(50),
+        Tipo_aluno INT,
+        Curso NVARCHAR(2)
+    );
+END;
+```
+
+### Explicação:
+
+- **Verificação de Banco de Dados (`sys.databases`)**: A consulta `SELECT * FROM sys.databases WHERE name = 'NomeDoBancoDeDados'` verifica se um banco de dados com o nome especificado já existe. Se não existir (`IF NOT EXISTS`), o banco de dados será criado.
+  
+- **Verificação de Tabela (`sys.objects`)**: A consulta `SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'NomeDaTabela') AND type in (N'U')` verifica se uma tabela com o nome especificado já existe no banco de dados atual. A função `OBJECT_ID` retorna o ID do objeto (nesse caso, a tabela) se ele existir, e a condição `type in (N'U')` filtra para garantir que estamos verificando por tabelas de usuário (`U`).
+
+Essa abordagem garante que o banco de dados e a tabela só serão criados se ainda não existirem, evitando erros ou duplicação de estruturas no seu banco de dados.
+
 ### 4.2 `CASE`
 
 O comando `CASE` no SQL é usado para realizar comparações condicionais e retornar valores baseados em diferentes condições. Ele é similar a uma estrutura `IF / ELSE` encontrada em linguagens de programação tradicionais, mas é aplicado dentro de consultas SQL. O `CASE` permite que você verifique várias condições e, dependendo de qual delas é verdadeira, retorna um valor específico. Se nenhuma das condições for verdadeira, um valor padrão pode ser retornado usando a cláusula `ELSE`.
