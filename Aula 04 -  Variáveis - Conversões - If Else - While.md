@@ -193,21 +193,115 @@ FROM Estudantes;
 
 ## 5. Loops no SQL
 
-### 5.1 While
+### 5.1 `WHILE` Loop
 
-O loop `WHILE` é utilizado para repetir a execução de um bloco de código enquanto uma condição for verdadeira.
+O comando `WHILE` é a principal estrutura de laço de repetição no SQL Server. Ele repete um bloco de código enquanto uma condição especificada for verdadeira.
 
-**Exemplo:**
+#### Sintaxe:
 
 ```sql
-DECLARE @Contador INT = 1;
-
-WHILE @Contador <= 5
+WHILE condição
 BEGIN
-    PRINT 'Contador: ' + CAST(@Contador AS VARCHAR);
-    SET @Contador = @Contador + 1;
+    -- Bloco de código a ser repetido
 END
 ```
+
+#### Exemplo:
+
+```sql
+DECLARE @contador INT = 1;
+
+WHILE @contador <= 10
+BEGIN
+    PRINT 'Contador: ' + CAST(@contador AS VARCHAR);
+    SET @contador = @contador + 1;
+END
+```
+
+**Explicação**: 
+- Neste exemplo, o bloco de código dentro do `WHILE` será repetido enquanto a variável `@contador` for menor ou igual a 10. A cada iteração, o valor de `@contador` é incrementado em 1.
+
+#### 5.1.2. `BREAK` e `CONTINUE`
+
+Embora não sejam laços de repetição por si só, `BREAK` e `CONTINUE` são comandos que controlam o fluxo de execução dentro de um laço `WHILE`.
+
+- **`BREAK`**: Sai imediatamente do laço `WHILE`, interrompendo a repetição.
+  
+- **`CONTINUE`**: Pula o restante do código na iteração atual e retorna ao início do laço `WHILE`, verificando a condição novamente.
+
+#### Exemplo com `BREAK`:
+
+```sql
+DECLARE @contador INT = 1;
+
+WHILE @contador <= 10
+BEGIN
+    IF @contador = 5
+        BREAK;
+
+    PRINT 'Contador: ' + CAST(@contador AS VARCHAR);
+    SET @contador = @contador + 1;
+END
+```
+
+**Explicação**:
+- Quando o valor de `@contador` chega a 5, o comando `BREAK` é executado, e o laço é interrompido imediatamente.
+
+#### Exemplo com `CONTINUE`:
+
+```sql
+DECLARE @contador INT = 1;
+
+WHILE @contador <= 10
+BEGIN
+    SET @contador = @contador + 1;
+
+    IF @contador % 2 = 0
+        CONTINUE;
+
+    PRINT 'Contador: ' + CAST(@contador AS VARCHAR);
+END
+```
+
+**Explicação**:
+- Neste exemplo, o laço imprime apenas os valores ímpares de `@contador`. Se o valor for par, o `CONTINUE` faz com que o restante do bloco seja ignorado e o laço continue para a próxima iteração.
+
+### 5.3. Cursores (Cursors)
+
+Embora não sejam laços de repetição tradicionais, cursores permitem a iteração linha por linha em um conjunto de resultados. Eles são usados em situações onde você precisa processar cada linha de uma consulta individualmente.
+
+#### Exemplo de Cursor:
+
+```sql
+DECLARE @nome NVARCHAR(50);
+
+DECLARE cursorFuncionarios CURSOR FOR
+SELECT nome FROM Funcionarios;
+
+OPEN cursorFuncionarios;
+
+FETCH NEXT FROM cursorFuncionarios INTO @nome;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    PRINT @nome;
+    FETCH NEXT FROM cursorFuncionarios INTO @nome;
+END;
+
+CLOSE cursorFuncionarios;
+DEALLOCATE cursorFuncionarios;
+```
+
+**Explicação**:
+- Esse exemplo cria um cursor que itera sobre todos os nomes dos funcionários, processando cada linha de forma sequencial.
+
+### Resumo
+
+- **`WHILE`**: É o laço de repetição padrão em SQL Server, que repete um bloco de código enquanto uma condição for verdadeira.
+- **`BREAK` e `CONTINUE`**: Comandos de controle de fluxo usados dentro de um laço `WHILE`.
+- **Cursores**: Usados para iterar sobre um conjunto de resultados linha por linha.
+
+Estes são os principais mecanismos de repetição e controle de fluxo disponíveis no SQL Server.
 
 ## 6. Exemplos em SQL
 
