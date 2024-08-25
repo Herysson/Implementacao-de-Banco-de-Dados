@@ -294,6 +294,23 @@ DEALLOCATE cursorFuncionarios;
 
 **Explicação**:
 - Esse exemplo cria um cursor que itera sobre todos os nomes dos funcionários, processando cada linha de forma sequencial.
+- `@@FETCH_STATUS` é uma função global do SQL Server que retorna o status da última operação de `FETCH` realizada em um cursor. Ele é usado principalmente em conjunto com cursores para controlar o fluxo de um laço que itera sobre um conjunto de resultados, garantindo que o laço continue enquanto ainda houver linhas a serem processadas.
+- `@@FETCH_STATUS` é comumente utilizado dentro de um laço `WHILE` para iterar sobre todas as linhas em um cursor. O laço continua executando enquanto `@@FETCH_STATUS` retornar `0`, ou seja, enquanto o cursor conseguir recuperar linhas com sucesso.
+
+**Valores Retornados por `@@FETCH_STATUS`**
+
+`@@FETCH_STATUS` pode retornar três valores diferentes, cada um indicando o status da última operação de `FETCH`:
+
+1. **0**: A última operação de `FETCH` foi bem-sucedida. Isso significa que a linha foi recuperada com sucesso do conjunto de resultados.
+2. **-1**: A operação de `FETCH` falhou ou a linha solicitada não existe. Esse valor geralmente indica que o cursor atingiu o final do conjunto de resultados.
+3. **-2**: A linha solicitada foi excluída ou perdeu a precisão devido a uma modificação externa (como uma alteração na tabela subjacente).
+
+### Importância de `@@FETCH_STATUS`
+
+- **Controle de Fluxo**: `@@FETCH_STATUS` é crucial para garantir que o laço que percorre um cursor termine corretamente quando todas as linhas forem processadas.
+- **Erro no `FETCH`**: Se ocorrer algum problema durante a recuperação de uma linha, `@@FETCH_STATUS` indica isso, permitindo que você trate erros ou interrupções na execução.
+
+Em resumo, `@@FETCH_STATUS` é uma função essencial para controlar laços que processam dados com cursores no SQL Server, garantindo que o código funcione corretamente até que todos os dados tenham sido processados.
 
 ## 6. Exemplos em SQL
 
