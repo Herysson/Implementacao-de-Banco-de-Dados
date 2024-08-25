@@ -169,27 +169,51 @@ FROM Funcionarios;
 - Caso contrário, retornará "Admitido há mais de 6 meses".
 
 #### Exemplo 3: Conversão de Notas para Conceitos
-Suponha que você tenha uma tabela `Estudantes` com uma coluna `nota`. Você deseja converter as notas numéricas em conceitos (A, B, C, D, F).
+Para modificar as notas dos alunos e substituir as letras por valores numéricos com base na escala fornecida (A ≥ 90, B ≥ 80 e < 90, C ≥ 70 e < 80, D ≥ 60 e < 70), você pode seguir os passos abaixo:
+
+**Atualizar a Tabela `HISTORICO_ESCOLAR`**
+
+Primeiro, precisaremos modificar a estrutura da tabela `HISTORICO_ESCOLAR` para que a coluna `Nota` aceite valores numéricos em vez de caracteres.
+
+**Alterando a coluna `Nota` para `INT`:**
 
 ```sql
-SELECT nome, 
-       nota,
-       CASE 
-           WHEN nota >= 90 THEN 'A'
-           WHEN nota >= 80 THEN 'B'
-           WHEN nota >= 70 THEN 'C'
-           WHEN nota >= 60 THEN 'D'
-           ELSE 'F'
-       END AS Conceito
-FROM Estudantes;
+ALTER TABLE HISTORICO_ESCOLAR
+ALTER COLUMN Nota INT;
 ```
 
-**Explicação**:
-- Se a `nota` for 90 ou mais, o conceito será "A".
-- Se estiver entre 80 e 89, será "B".
-- Se estiver entre 70 e 79, será "C".
-- Se estiver entre 60 e 69, será "D".
-- Se a `nota` for menor que 60, será "F".
+**2. Atualizar as Notas com Base nas Letras Originais**
+
+Agora, você pode usar o comando `UPDATE` para modificar as notas conforme as regras especificadas:
+
+```sql
+UPDATE HISTORICO_ESCOLAR
+SET Nota = CASE 
+               WHEN Nota = 'A' THEN 90
+               WHEN Nota = 'B' THEN 85
+               WHEN Nota = 'C' THEN 75
+               WHEN Nota = 'D' THEN 65
+               ELSE 0
+           END;
+```
+
+**Revisão das Regras de Mapeamento**
+
+Aqui está como cada nota é mapeada:
+
+- **A**: Transformado para **90** (ou maior).
+- **B**: Transformado para **85** (valor central na faixa entre 80 e 89).
+- **C**: Transformado para **75** (valor central na faixa entre 70 e 79).
+- **D**: Transformado para **65** (valor central na faixa entre 60 e 69).
+- **Notas diferentes de A, B, C, D**: Transformado para **0** (ou você pode definir qualquer outro valor padrão ou expandir a lógica do `CASE`).
+
+**Verificando as Alterações**
+
+Após a atualização, você pode verificar os resultados com uma consulta simples:
+
+```sql
+SELECT * FROM HISTORICO_ESCOLAR;
+```
 
 ## 5. Loops no SQL
 
