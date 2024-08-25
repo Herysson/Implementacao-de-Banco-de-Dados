@@ -111,6 +111,86 @@ ELSE
     PRINT 'O valor é 5 ou menor';
 ```
 
+### 4.2 `CASE`
+
+O comando `CASE` no SQL é usado para realizar comparações condicionais e retornar valores baseados em diferentes condições. Ele é similar a uma estrutura `IF / ELSE` encontrada em linguagens de programação tradicionais, mas é aplicado dentro de consultas SQL. O `CASE` permite que você verifique várias condições e, dependendo de qual delas é verdadeira, retorna um valor específico. Se nenhuma das condições for verdadeira, um valor padrão pode ser retornado usando a cláusula `ELSE`.
+
+```sql
+CASE
+    WHEN condição1 THEN valor1
+    WHEN condição2 THEN valor2
+    ...
+    ELSE valor_default
+END
+```
+
+- **`WHEN condição1 THEN valor1`**: Se a `condição1` for verdadeira, o `valor1` é retornado.
+- **`ELSE valor_default`**: (Opcional) Se nenhuma das condições for verdadeira, `valor_default` é retornado.
+- **`END`**: Marca o fim da expressão `CASE`.
+
+### Exemplos Simples
+
+#### Exemplo 1: Classificação de Salários
+
+Vamos supor que você tem uma tabela `Funcionarios` com uma coluna `salario`. Você quer classificar os funcionários em categorias de "Alto", "Médio", ou "Baixo" com base no salário.
+
+```sql
+SELECT nome, 
+       salario,
+       CASE 
+           WHEN salario > 5000 THEN 'Alto'
+           WHEN salario BETWEEN 2500 AND 5000 THEN 'Médio'
+           ELSE 'Baixo'
+       END AS Categoria_Salario
+FROM Funcionarios;
+```
+
+**Explicação**: 
+- Se o salário for maior que 5000, a coluna `Categoria_Salario` retornará "Alto".
+- Se o salário estiver entre 2500 e 5000, retornará "Médio".
+- Se nenhuma dessas condições for atendida (ou seja, o salário é menor que 2500), retornará "Baixo".
+
+#### Exemplo 2: Verificação de Admissão Recente
+
+Você deseja saber se os funcionários foram admitidos nos últimos 6 meses.
+
+```sql
+SELECT nome,
+       data_admissao,
+       CASE 
+           WHEN DATEDIFF(CURRENT_DATE, data_admissao) <= 180 THEN 'Recém-admitido'
+           ELSE 'Admitido há mais de 6 meses'
+       END AS Status
+FROM Funcionarios;
+```
+
+**Explicação**:
+- Se a diferença entre a data atual e a data de admissão for menor ou igual a 180 dias, a coluna `Status` retornará "Recém-admitido".
+- Caso contrário, retornará "Admitido há mais de 6 meses".
+
+#### Exemplo 3: Conversão de Notas para Conceitos
+Suponha que você tenha uma tabela `Estudantes` com uma coluna `nota`. Você deseja converter as notas numéricas em conceitos (A, B, C, D, F).
+
+```sql
+SELECT nome, 
+       nota,
+       CASE 
+           WHEN nota >= 90 THEN 'A'
+           WHEN nota >= 80 THEN 'B'
+           WHEN nota >= 70 THEN 'C'
+           WHEN nota >= 60 THEN 'D'
+           ELSE 'F'
+       END AS Conceito
+FROM Estudantes;
+```
+
+**Explicação**:
+- Se a `nota` for 90 ou mais, o conceito será "A".
+- Se estiver entre 80 e 89, será "B".
+- Se estiver entre 70 e 79, será "C".
+- Se estiver entre 60 e 69, será "D".
+- Se a `nota` for menor que 60, será "F".
+
 ## 5. Loops no SQL
 
 ### 5.1 While
