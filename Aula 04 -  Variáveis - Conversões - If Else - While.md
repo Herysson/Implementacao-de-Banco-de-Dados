@@ -295,14 +295,6 @@ DEALLOCATE cursorFuncionarios;
 **Explicação**:
 - Esse exemplo cria um cursor que itera sobre todos os nomes dos funcionários, processando cada linha de forma sequencial.
 
-### Resumo
-
-- **`WHILE`**: É o laço de repetição padrão em SQL Server, que repete um bloco de código enquanto uma condição for verdadeira.
-- **`BREAK` e `CONTINUE`**: Comandos de controle de fluxo usados dentro de um laço `WHILE`.
-- **Cursores**: Usados para iterar sobre um conjunto de resultados linha por linha.
-
-Estes são os principais mecanismos de repetição e controle de fluxo disponíveis no SQL Server.
-
 ## 6. Exemplos em SQL
 
 ### 6.1 Exemplo Completo: Procedimento Armazenado com Estruturas Condicionais e Loop
