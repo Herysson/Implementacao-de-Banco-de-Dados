@@ -40,12 +40,43 @@ No SQL Server, variáveis são utilizadas para armazenar valores temporários qu
 DECLARE @NomeVariavel TipoDeDado;
 ```
 
-**Exemplo:**
+**Exemplo 1:**
 
 ```sql
 DECLARE @Nome VARCHAR(50);
 DECLARE @Idade INT;
 ```
+
+**Exemplo 2:**
+
+```sql
+DECLARE @TabelaAlunos TABLE (
+    Numero_aluno INT PRIMARY KEY,
+    Nome NVARCHAR(50),
+    Tipo_aluno INT,
+    Curso NVARCHAR(2)
+);
+
+-- Inserindo dados na tabela em memória
+INSERT INTO @TabelaAlunos (Numero_aluno, Nome, Tipo_aluno, Curso)
+VALUES 
+(1, 'Silva', 1, 'CC'),
+(2, 'Braga', 2, 'CC');
+
+-- Selecionando dados da tabela em memória
+SELECT * FROM @TabelaAlunos;
+```
+
+**Uso Comum de Tabelas Declaradas**
+
+As tabelas declaradas com `DECLARE @TabelaAlunos TABLE (...)` são especialmente úteis quando você precisa armazenar resultados intermediários ou trabalhar com pequenos conjuntos de dados temporariamente durante a execução de um script ou procedimento armazenado. Essas tabelas são descartadas automaticamente quando a sessão ou o bloco de código termina.
+
+**Limitações**
+
+- Essas tabelas só existem na memória durante a execução da sessão ou script em que foram declaradas.
+- Elas não podem ser indexadas com índices não-clustered, mas suportam índices clusterizados via chave primária.
+- Não podem ser referenciadas fora do bloco onde foram declaradas.
+
 
 ### 2.2 Atribuição de Valores
 
