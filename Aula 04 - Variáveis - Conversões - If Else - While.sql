@@ -275,7 +275,7 @@ BEGIN
 	PRINT 'A coluna Bonus não existe na tabela Funcionarios.';
 END
 
-Verificar se o Funcionário é um Novo Contratado
+--Verificar se o Funcionário é um Novo Contratado
 -- Declarando variáveis
 DECLARE @Data_Admissao DATE,
         @Nome_Funcionario VARCHAR(100) = 'Ana Sousa'; -- Substitua pelo nome do funcionário desejado
