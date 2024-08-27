@@ -24,6 +24,27 @@ PRINT 'O valor da variavel nome é: '
 GO
 
 --SELECT para colocar valor em uma variável
+-- Declarando variáveis
+DECLARE @Nome_Funcionario VARCHAR(100),
+        @Salario DECIMAL(10, 2),
+        @Aumento DECIMAL(10, 2),
+        @Novo_Salario DECIMAL(10, 2);
+
+-- Atribuindo valores
+SELECT @Nome_Funcionario = F.Nome, @Salario = F.Salario
+FROM Funcionarios as F
+WHERE F.CPF = '98765432100';
+
+-- Calculando o novo salário com um aumento de 10%
+SET @Aumento = 0.10;
+SET @Novo_Salario = @Salario + (@Salario * @Aumento);
+
+-- Exibindo o resultado
+SELECT  @Nome_Funcionario AS 'Nome do Funcionário',
+        @Salario AS 'Salário Atual',
+        @Novo_Salario AS 'Novo Salário com Aumento';
+
+-- Exemplo bilioteca.
 DECLARE @Nome_Livro VARCHAR(100)
 
 SELECT @Nome_Livro = L.titulo
@@ -46,26 +67,30 @@ WHERE isbn = '9788581742458';
 SELECT	@Nome_Livro AS 'Nome do Livro',
 		@Ano_Atual - @Ano_Publicacao AS 'Idade do Livro';
 
+--Declaração de tabelas
 --Calculando idade 
-CREATE TABLE ALUNO (
-	Id INT IDENTITY,
+DECLARE @ALUNO TABLE(
+	Id INT IDENTITY PRIMARY KEY,
 	Nome VARCHAR(50),
-	Data_Nasc DATE
+	Data_Nasc DATE,
+	Curso VARCHAR(2)
 );
 
-INSERT INTO ALUNO VALUES ('Herysson R. Figueredo', '1988-06-07');
+INSERT INTO @ALUNO 
+VALUES ('Herysson R. Figueredo', '1988-06-07','SI');
 
 
 --Calculando Idade
 DECLARE @idade INT
 
+-- Isso ainda não está correto precisamos melhorar esta consulta.
 SELECT @idade = (YEAR(GETDATE()) - YEAR(Data_Nasc)) 
 FROM ALUNO
 WHERE id = 1;
 
 PRINT 'Idade: ' + CAST(@Idade AS VARCHAR(10));
 
---Declaração de tabelas
+
 DECLARE @TabelaAlunos TABLE(
 	Id INT PRIMARY KEY IDENTITY,
 	Nome VARCHAR(50),
@@ -79,6 +104,7 @@ VALUES	('Herysson R. Figueiredo',1, 'SI'),
 --Recuperar os valore
 SELECT * FROM @TabelaAlunos;
 
+---------------------------------------------------------------------------------------------------------------
 --CAST
 SELECT	'O livro ' 
 		+ titulo 
