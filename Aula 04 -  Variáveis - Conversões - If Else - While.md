@@ -432,7 +432,7 @@ ALTER TABLE HISTORICO_ESCOLAR
 ALTER COLUMN Nota INT;
 ```
 
-**2. Atualizar as Notas com Base nas Letras Originais**
+**Atualizar as Notas com Base nas Letras Originais**
 
 Agora, você pode usar o comando `UPDATE` para modificar as notas conforme as regras especificadas:
 
@@ -464,6 +464,64 @@ Após a atualização, você pode verificar os resultados com uma consulta simpl
 ```sql
 SELECT * FROM HISTORICO_ESCOLAR;
 ```
+#### Exemplo 4: Calcular a idade do aluno utilizando
+Para calcular a idade do aluno utilizando a tabela `@ALUNO`, você pode usar a função `DATEDIFF` em conjunto com `GETDATE()` para calcular a diferença entre a data atual e a data de nascimento do aluno. Abaixo está o exemplo de como fazer isso:
+
+```sql
+-- Declarando a tabela temporária @ALUNO
+DECLARE @ALUNO TABLE(
+	Id INT IDENTITY PRIMARY KEY,
+	Nome VARCHAR(50),
+	Data_Nasc DATE,
+	Curso VARCHAR(2)
+);
+
+-- Inserindo dados na tabela @ALUNO
+INSERT INTO @ALUNO 
+VALUES ('Herysson R. Figueredo', '1988-06-07','SI');
+
+-- Calculando a idade do aluno
+DECLARE @Nome_Aluno VARCHAR(50),
+        @Data_Nasc DATE,
+        @Idade INT;
+
+-- Atribuindo valores
+SELECT @Nome_Aluno = Nome, @Data_Nasc = Data_Nasc
+FROM @ALUNO
+WHERE Nome = 'Herysson R. Figueredo';
+
+-- Calculando a idade
+SET @Idade = DATEDIFF(YEAR, @Data_Nasc, GETDATE()) - 
+    CASE WHEN MONTH(@Data_Nasc) > MONTH(GETDATE()) OR 
+              (MONTH(@Data_Nasc) = MONTH(GETDATE()) AND DAY(@Data_Nasc) > DAY(GETDATE())) 
+         THEN 1 
+         ELSE 0 
+    END;
+
+-- Exibindo o resultado
+SELECT @Nome_Aluno AS 'Nome do Aluno', 
+       @Idade AS 'Idade';
+```
+
+### Explicação:
+
+1. **Tabela Temporária `@ALUNO`:**
+   - Declaramos uma tabela temporária `@ALUNO` com as colunas `Id`, `Nome`, `Data_Nasc`, e `Curso`.
+
+2. **Inserção de Dados:**
+   - Inserimos um registro na tabela `@ALUNO` com o nome 'Herysson R. Figueredo' e a data de nascimento '1988-06-07'.
+
+3. **Atribuição de Valores:**
+   - Extraímos o nome e a data de nascimento do aluno e armazenamos nas variáveis `@Nome_Aluno` e `@Data_Nasc`.
+
+4. **Cálculo da Idade:**
+   - Utilizamos `DATEDIFF(YEAR, @Data_Nasc, GETDATE())` para calcular a diferença em anos entre a data de nascimento e a data atual.
+   - Para ajustar o cálculo, subtraímos 1 ano se o mês e o dia de nascimento ainda não tiverem ocorrido no ano atual.
+
+5. **Exibição do Resultado:**
+   - Exibimos o nome do aluno e a idade calculada.
+
+Esse método assegura que a idade seja calculada corretamente, considerando se o aniversário do aluno já passou ou não no ano corrente.
 
 ## 5. Loops no SQL
 
