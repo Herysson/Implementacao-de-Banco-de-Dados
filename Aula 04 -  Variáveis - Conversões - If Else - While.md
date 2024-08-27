@@ -103,6 +103,84 @@ PRINT @Nome;
 SELECT @Nome, @Idade;
 ```
 
+Claro! A seguir, apresento exemplos de utilização dos comandos `DECLARE`, `SET` e `SELECT` no SQL Server para definir valores a variáveis, utilizando o banco de dados EMPRESA. Supondo que o banco de dados possua tabelas como `Funcionarios`, `Departamentos`, e `Projetos`, os exemplos abaixo demonstram como declarar variáveis, atribuir valores a elas e utilizá-las em consultas.
+
+
+### 2.4 Exemplos
+
+#### Exemplo: Obter o número total de funcionários
+
+```sql
+-- Declara a variável para armazenar o total de funcionários
+DECLARE @TotalFuncionarios INT;
+
+-- Atribui o valor à variável usando SET
+SET @TotalFuncionarios = (SELECT COUNT(*) FROM Funcionarios);
+
+-- Exibe o valor da variável
+SELECT @TotalFuncionarios AS TotalFuncionarios;
+```
+
+**Explicação:**
+- `DECLARE` cria uma variável chamada `@TotalFuncionarios` do tipo inteiro.
+- `SET` atribui à variável o resultado da contagem de todos os registros na tabela `Funcionarios`.
+- O `SELECT` final exibe o valor armazenado na variável.
+
+#### Exemplo: Obter o nome de um departamento específico
+
+```sql
+-- Declara a variável para armazenar o nome do departamento
+DECLARE @NomeDepartamento VARCHAR(50);
+
+-- Atribui o valor à variável usando SELECT
+SELECT @NomeDepartamento = NomeDepartamento
+FROM Departamentos
+WHERE DepartamentoID = 2;
+
+-- Exibe o valor da variável
+SELECT @NomeDepartamento AS NomeDepartamento;
+```
+
+**Explicação:**
+- `DECLARE` cria uma variável chamada `@NomeDepartamento` do tipo `VARCHAR`.
+- `SELECT` atribui à variável o valor de `NomeDepartamento` onde o `DepartamentoID` é 2.
+- O `SELECT` final exibe o valor armazenado na variável.
+
+
+#### Exemplo: Obter detalhes de um funcionário específico
+
+```sql
+-- Declara as variáveis
+DECLARE @FuncionarioID INT;
+DECLARE @PrimeiroNome VARCHAR(50);
+DECLARE @UltimoNome VARCHAR(50);
+DECLARE @Salario DECIMAL(10,2);
+
+-- Define o ID do funcionário usando SET
+SET @FuncionarioID = 1001;
+
+-- Recupera os detalhes do funcionário usando SELECT
+SELECT 
+    @PrimeiroNome = PrimeiroNome,
+    @UltimoNome = UltimoNome,
+    @Salario = Salario
+FROM Funcionarios
+WHERE FuncionarioID = @FuncionarioID;
+
+-- Exibe os valores das variáveis
+SELECT 
+    @FuncionarioID AS FuncionarioID,
+    @PrimeiroNome AS PrimeiroNome,
+    @UltimoNome AS UltimoNome,
+    @Salario AS Salario;
+```
+
+**Explicação:**
+- `DECLARE` cria quatro variáveis para armazenar diferentes informações do funcionário.
+- `SET` atribui o valor `1001` à variável `@FuncionarioID`.
+- `SELECT` recupera `PrimeiroNome`, `UltimoNome` e `Salario` da tabela `Funcionarios` onde o `Funcionario
+
+
 ## 3. Conversão de Dados
 
 ### 3.1 CAST
@@ -123,6 +201,24 @@ A função `CONVERT` oferece funcionalidades similares ao `CAST`, mas com maior 
 
 ```sql
 SELECT CONVERT(VARCHAR(10), GETDATE(), 103) AS DataFormatada;  -- Saída: '12/08/2024'
+```
+
+### 3.3 Exemplos
+
+#### Exemplo de Conversão de Dados com `CONVERT` (Data)
+```sql
+-- Exemplo 2: Convertendo a data de contratação para diferentes formatos de string
+DECLARE @Datanasc DATETIME;
+SET @Datanasc = (SELECT Datanasc FROM FUNCIONARIO WHERE cpf = '88866555576');
+
+-- Convertendo para o formato DD/MM/YYYY
+SELECT CONVERT(NVARCHAR(10), @HireDate, 103) AS 'Data no formato DD/MM/YYYY';
+
+-- Convertendo para o formato MM-DD-YYYY
+SELECT CONVERT(NVARCHAR(10), @HireDate, 110) AS 'Data no formato MM-DD-YYYY';
+
+-- Convertendo para o formato YYYYMMDD
+SELECT CONVERT(NVARCHAR(8), @HireDate, 112) AS 'Data no formato YYYYMMDD';
 ```
 
 ## 4. Estruturas Condicionais no SQL
