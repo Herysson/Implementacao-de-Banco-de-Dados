@@ -79,6 +79,7 @@ DECLARE @ALUNO TABLE(
 INSERT INTO @ALUNO 
 VALUES ('Herysson R. Figueredo', '1988-06-07','SI');
 
+SELECT * FROM @ALUNO;
 
 --Calculando Idade
 DECLARE @idade INT
@@ -90,60 +91,52 @@ WHERE id = 1;
 
 PRINT 'Idade: ' + CAST(@Idade AS VARCHAR(10));
 
-
-DECLARE @TabelaAlunos TABLE(
-	Id INT PRIMARY KEY IDENTITY,
-	Nome VARCHAR(50),
-	Tipo_aluno INT,
-	Curso VARCHAR(2)
-	);
---Inserir valores na tabela
-INSERT INTO @TabelaAlunos 
-VALUES	('Herysson R. Figueiredo',1, 'SI'),
-		('Juca da Silva', 2, 'CC');
---Recuperar os valore
-SELECT * FROM @TabelaAlunos;
-
 ---------------------------------------------------------------------------------------------------------------
---CAST
-SELECT	'O livro ' 
-		+ titulo 
-		+ ' é do ano: '
-		+ CAST(ano AS VARCHAR(10)) AS 'Titulo / Ano'
-FROM Livro;
+--CAST 
+-- Usando CAST para converter o salário decimal em uma string
+SELECT	'O funcionário ' 
+		+ Nome 
+		+ ' tem um salário de: R$ ' 
+		+ CAST(Salario AS VARCHAR(20)) AS 'Nome / Salário'
+FROM Funcionarios;
 
---CONVERT
-SELECT	'O livro ' 
-		+ titulo 
-		+ ' é do ano: '
-		+ CONVERT(VARCHAR, ano) AS 'Titulo / Ano'
-FROM Livro;
---CONVERT com estilo
-SELECT	'O aluno '
+-- Usando CONVERT para converter o salário decimal em uma string
+SELECT	'O funcionário ' 
+		+ Nome 
+		+ ' tem um salário de: R$ ' 
+		+ CONVERT(VARCHAR(20), Salario) AS 'Nome / Salário'
+FROM Funcionarios;
+-- Usando CONVERT para formatar a data de nascimento no formato DD/MM/YYYY
+SELECT	'O funcionário '
 		+ Nome
-		+ ' nasceu em:'
-		+ CONVERT(VARCHAR(10), Data_Nasc,103)
-FROM ALUNO;
+		+ ' nasceu em: '
+		+ CONVERT(VARCHAR(10), Data_Nasc, 103) AS 'Nome / Data de Nascimento'
+FROM Funcionarios;
+-- Usando CAST para converter o resultado de um cálculo de idade em uma string
+DECLARE @Ano_Atual INT = 2024;
 
+SELECT	'O funcionário ' 
+		+ Nome 
+		+ ' tem ' 
+		+ CAST(@Ano_Atual - YEAR(Data_Nasc) AS VARCHAR(3)) 
+		+ ' anos.' AS 'Nome / Idade'
+FROM Funcionarios;
 
-CREATE TABLE ALUNO (
-	Id INT IDENTITY,
-	Nome VARCHAR(50),
-	Data_Nasc DATE
-);
+-- Convertendo a data de contratação para diferentes formatos de string
+DECLARE @Datanasc DATETIME;
+SET @Datanasc = (SELECT Datanasc FROM FUNCIONARIO WHERE cpf = '88866555576');
 
-INSERT INTO ALUNO VALUES ('Herysson R. Figueredo', '1988-06-07');
+-- Convertendo para o formato DD/MM/YYYY
+SELECT CONVERT(NVARCHAR(10), @HireDate, 103) AS 'Data no formato DD/MM/YYYY';
 
+-- Convertendo para o formato MM-DD-YYYY
+SELECT CONVERT(NVARCHAR(10), @HireDate, 110) AS 'Data no formato MM-DD-YYYY';
 
---Calculando Idade
-DECLARE @idade INT
+-- Convertendo para o formato YYYYMMDD
+SELECT CONVERT(NVARCHAR(8), @HireDate, 112) AS 'Data no formato YYYYMMDD';
 
-SELECT @idade = (YEAR(GETDATE()) - YEAR(Data_Nasc)) 
-FROM ALUNO
-WHERE id = 1;
-
-PRINT 'Idade: ' + CAST(@Idade AS VARCHAR(10));
-
+--------------------------------------------------------------------------------
+-- IF / ELSE
 
 --Declarando uma variável
 DECLARE @numero INT,
