@@ -204,8 +204,70 @@ SELECT CONVERT(VARCHAR(10), GETDATE(), 103) AS DataFormatada;  -- Saída: '12/08
 ```
 
 ### 3.3 Exemplos
+Aqui estão exemplos de uso de `CAST` e `CONVERT` adaptados para o banco de dados `EMPRESA`, utilizando a tabela `Funcionarios`:
 
-#### Exemplo de Conversão de Dados com `CONVERT` (Data)
+### Exemplo 1: Usando `CAST`
+
+```sql
+-- Usando CAST para converter o salário decimal em uma string
+SELECT	'O funcionário ' 
+		+ Nome 
+		+ ' tem um salário de: R$ ' 
+		+ CAST(Salario AS VARCHAR(20)) AS 'Nome / Salário'
+FROM Funcionarios;
+```
+
+**Explicação:**
+- Aqui, o `CAST` está sendo utilizado para converter o campo `Salario`, que é do tipo `DECIMAL`, para `VARCHAR`, permitindo concatenar essa informação em uma string.
+
+### Exemplo 2: Usando `CONVERT`
+
+```sql
+-- Usando CONVERT para converter o salário decimal em uma string
+SELECT	'O funcionário ' 
+		+ Nome 
+		+ ' tem um salário de: R$ ' 
+		+ CONVERT(VARCHAR(20), Salario) AS 'Nome / Salário'
+FROM Funcionarios;
+```
+
+**Explicação:**
+- Esse exemplo é similar ao anterior, mas usa `CONVERT` para realizar a conversão do salário de `DECIMAL` para `VARCHAR`.
+
+### Exemplo 3: Usando `CONVERT` com Estilo
+
+```sql
+-- Usando CONVERT para formatar a data de nascimento no formato DD/MM/YYYY
+SELECT	'O funcionário '
+		+ Nome
+		+ ' nasceu em: '
+		+ CONVERT(VARCHAR(10), Data_Nasc, 103) AS 'Nome / Data de Nascimento'
+FROM Funcionarios;
+```
+
+**Explicação:**
+- Aqui, `CONVERT` é usado para formatar a data de nascimento (`Data_Nasc`) no formato `DD/MM/YYYY` (estilo 103). Isso facilita a leitura da data em um formato comum.
+
+### Exemplo 4: Usando `CAST` em um Cálculo
+
+```sql
+-- Usando CAST para converter o resultado de um cálculo de idade em uma string
+DECLARE @Ano_Atual INT = 2024;
+
+SELECT	'O funcionário ' 
+		+ Nome 
+		+ ' tem ' 
+		+ CAST(@Ano_Atual - YEAR(Data_Nasc) AS VARCHAR(3)) 
+		+ ' anos.' AS 'Nome / Idade'
+FROM Funcionarios;
+```
+
+**Explicação:**
+- Neste exemplo, `CAST` converte o resultado do cálculo de idade (`@Ano_Atual - YEAR(Data_Nasc)`) para `VARCHAR`, permitindo a inclusão da idade em uma string.
+
+Esses exemplos mostram como `CAST` e `CONVERT` podem ser usados para manipular e formatar dados no banco de dados `EMPRESA`, de maneira similar aos exemplos fornecidos, mas adaptados ao contexto dos funcionários.
+
+#### Exemplo 5: Conversão de Dados com `CONVERT` (Data)
 ```sql
 -- Exemplo 2: Convertendo a data de contratação para diferentes formatos de string
 DECLARE @Datanasc DATETIME;
