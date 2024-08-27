@@ -169,13 +169,13 @@ IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'Bilioteca')
 	CREATE DATABASE Biblioteca;
 ELSE
 	PRINT 'O Banco já existe';
---Verificando se uma tabela já existe
+-- Verificando se uma tabela já existe
 IF NOT EXISTS (	SELECT * FROM sys.objects 
 				WHERE object_id = OBJECT_ID(N'Faculdade') 
 				AND type IN (N'U'))
 	BEGIN
 		CREATE TABLE Faculdade(
-			Id INT  IDENTITY PRIMARY KEY,
+			Id INT IDENTITY PRIMARY KEY,
 			Nome VARCHAR(50),
 			Nota1 FLOAT,
 			Nota2 FLOAT,
@@ -183,8 +183,9 @@ IF NOT EXISTS (	SELECT * FROM sys.objects
 		);
 	END
 ELSE 
-	PRINT 'A tablea ja existe';
+	PRINT 'A tabela já existe';
 
+-- Inserindo dados na tabela Faculdade
 INSERT INTO Faculdade 
 VALUES	('Herysson', 9,8,7),
 		('Paulo', 6,8,7),
@@ -195,10 +196,97 @@ VALUES	('Herysson', 9,8,7),
 		('Judas', -3,-8,-25);
 
 -- Calcular a média de um dos Alunos
-DECLARE @media FLOAT
-SELECT @media = ((F.Nota1+F.Nota2+F.Nota3)/3)
-FROM Faculdade  AS F
+DECLARE @media FLOAT,
+        @nome_aluno VARCHAR(50) = 'Herysson'; -- Escolha o aluno desejado
 
-PRINT @media
+SELECT @media = ((F.Nota1 + F.Nota2 + F.Nota3) / 3)
+FROM Faculdade AS F
+WHERE F.Nome = @nome_aluno;
+
+PRINT 'Média: ' + CAST(@media AS VARCHAR(10));
 
 -- Verificar se o aluno está aprovado ou reprovado
+IF @media >= 7
+	PRINT @nome_aluno + ' está Aprovado(a)';
+ELSE
+	PRINT @nome_aluno + ' está Reprovado(a)';
+
+-- Verificar se um Funcionário Recebe Abaixo da Média Salarial
+-- Declarando variáveis
+DECLARE @Salario_Medio DECIMAL(10, 2),
+        @Salario_Funcionario DECIMAL(10, 2),
+        @Nome_Funcionario VARCHAR(100) = 'João Silva'; -- Substitua pelo nome do funcionário desejado
+
+-- Calculando a média salarial de todos os funcionários
+SELECT @Salario_Medio = AVG(Salario)
+FROM Funcionarios;
+
+-- Obtendo o salário do funcionário específico
+SELECT @Salario_Funcionario = Salario
+FROM Funcionarios
+WHERE Nome = @Nome_Funcionario;
+
+-- Verificando se o salário do funcionário é abaixo da média
+IF @Salario_Funcionario < @Salario_Medio
+	PRINT @Nome_Funcionario + ' recebe abaixo da média salarial.';
+ELSE
+	PRINT @Nome_Funcionario + ' recebe na média ou acima da média salarial.';
+
+--Verificar se um Funcionário Está Próximo da Aposentadoria
+-- Declarando variáveis
+DECLARE @Idade_Funcionario INT,
+        @Nome_Funcionario VARCHAR(100) = 'Maria Oliveira'; -- Substitua pelo nome do funcionário desejado
+
+-- Calculando a idade do funcionário
+SELECT @Idade_Funcionario = DATEDIFF(YEAR, Data_Nasc, GETDATE())
+FROM Funcionarios
+WHERE Nome = @Nome_Funcionario;
+
+-- Verificando se o funcionário está próximo da aposentadoria (considerando 65 anos)
+IF @Idade_Funcionario >= 60
+	PRINT @Nome_Funcionario + ' está próximo(a) da aposentadoria.';
+ELSE
+	PRINT @Nome_Funcionario + ' ainda tem tempo até a aposentadoria.';
+
+-- Verificar se um Funcionário Já Recebeu Bônus Este Ano
+-- Verificar se a coluna de Bônus existe na tabela Funcionarios
+IF EXISTS (
+	SELECT * FROM sys.columns 
+	WHERE object_id = OBJECT_ID(N'Funcionarios') 
+	AND name = 'Bonus'
+)
+BEGIN
+	DECLARE @Bonus_Atual DECIMAL(10, 2),
+			@Nome_Funcionario VARCHAR(100) = 'Carlos Silva'; -- Substitua pelo nome do funcionário desejado
+
+	-- Obtendo o valor do bônus atual do funcionário
+	SELECT @Bonus_Atual = Bonus
+	FROM Funcionarios
+	WHERE Nome = @Nome_Funcionario;
+
+	-- Verificando se o funcionário já recebeu bônus este ano
+	IF @Bonus_Atual > 0
+		PRINT @Nome_Funcionario + ' já recebeu bônus este ano.';
+	ELSE
+		PRINT @Nome_Funcionario + ' ainda não recebeu bônus este ano.';
+END
+ELSE
+BEGIN
+	PRINT 'A coluna Bonus não existe na tabela Funcionarios.';
+END
+
+Verificar se o Funcionário é um Novo Contratado
+-- Declarando variáveis
+DECLARE @Data_Admissao DATE,
+        @Nome_Funcionario VARCHAR(100) = 'Ana Sousa'; -- Substitua pelo nome do funcionário desejado
+
+-- Obtendo a data de admissão do funcionário
+SELECT @Data_Admissao = Data_Admissao
+FROM Funcionarios
+WHERE Nome = @Nome_Funcionario;
+
+-- Verificando se o funcionário é novo (admitido nos últimos 6 meses)
+IF DATEDIFF(MONTH, @Data_Admissao, GETDATE()) <= 6
+	PRINT @Nome_Funcionario + ' é um(a) novo(a) contratado(a).';
+ELSE
+	PRINT @Nome_Funcionario + ' já está na empresa há mais de 6 meses.';
