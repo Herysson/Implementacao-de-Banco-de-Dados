@@ -1,4 +1,15 @@
+--REVISÂO
 
+IF (YEAR(GETDATE()) - YEAR(data) = 18 
+    AND MONTH(data) < MONTH(GETDATE()) 
+    AND DAY(data) < DAY(GETDATE()))
+    PRINT 'Maior de idade'
+ELSE IF (YEAR(GETDATE()) - YEAR(data) > 18)
+    PRINT 'Maior de idade'
+ELSE
+    PRINT 'Menor de idade'
+
+	
 --DECLARE
 --Declarando variáveis
 DECLARE @valor INT,
