@@ -283,6 +283,38 @@ DECLARE @TotalSalarios DECIMAL(18, 2);
 EXEC CalcularSalarioTotalPorDepartamento @DepartamentoID = 5, @SalarioTotal = @TotalSalarios OUTPUT;
 PRINT 'O salário total é: ' + CAST(@TotalSalarios AS VARCHAR(20));
 
+--Crie uma procedure que retorna a idade de um funcionário com base no CPF fornecido.
+CREATE PROCEDURE CalcularIdadeFuncionario
+    @Cpf VARCHAR(11),
+    @Idade INT OUTPUT
+AS
+BEGIN
+    DECLARE @DataNascimento DATE;
+    DECLARE @DataAtual DATE = GETDATE();
+
+    -- Obter a data de nascimento do funcionário com base no CPF
+    SELECT @DataNascimento = Datanasc
+    FROM FUNCIONARIO
+    WHERE Cpf = @Cpf;
+
+    -- Verifica se o CPF foi encontrado
+    IF @DataNascimento IS NULL
+    BEGIN
+        PRINT 'Funcionário não encontrado.';
+        SET @Idade = NULL;
+        RETURN;
+    END
+
+    -- Calcular a idade do funcionário
+    SET @Idade = DATEDIFF(YEAR, @DataNascimento, @DataAtual);
+
+    -- Verificar se o aniversário do funcionário já ocorreu este ano
+    IF (MONTH(@DataNascimento) > MONTH(@DataAtual)) OR (MONTH(@DataNascimento) = MONTH(@DataAtual) AND DAY(@DataNascimento) > DAY(@DataAtual))
+    BEGIN
+        SET @Idade = @Idade - 1; -- Reduz um ano se o aniversário ainda não ocorreu
+    END
+END;
+
 --Crie uma procedure que calcula um aumento salarial com base em uma porcentagem fornecida e retorna o novo salário via um parâmetro de saída. Ela também  deve verificar se o salário resultante excede um valor máximo predefinido (60000)
 CREATE PROCEDURE CalcularAumentoSalarial
     @Cpf VARCHAR(11),
