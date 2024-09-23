@@ -1,7 +1,6 @@
 CREATE DATABASE FACULDADE;
 USE FACULDADE;
 
--- Criação da tabela ALUNO
 CREATE TABLE ALUNO (
     Nome NVARCHAR(50),
     Numero_aluno INT PRIMARY KEY,
@@ -10,7 +9,6 @@ CREATE TABLE ALUNO (
     Data_Nascimento DATE
 );
 
--- Criação da tabela DISCIPLINA
 CREATE TABLE DISCIPLINA (
     Nome_disciplina NVARCHAR(100),
     Numero_disciplina NVARCHAR(10) PRIMARY KEY,
@@ -18,7 +16,6 @@ CREATE TABLE DISCIPLINA (
     Departamento NVARCHAR(10)
 );
 
--- Criação da tabela TURMA
 CREATE TABLE TURMA (
     Identificacao_turma INT PRIMARY KEY,
     Numero_disciplina NVARCHAR(10),
@@ -28,7 +25,6 @@ CREATE TABLE TURMA (
     FOREIGN KEY (Numero_disciplina) REFERENCES DISCIPLINA(Numero_disciplina)
 );
 
--- Criação da tabela HISTORICO_ESCOLAR
 CREATE TABLE HISTORICO_ESCOLAR (
     Numero_aluno INT,
     Identificacao_turma INT,
@@ -37,7 +33,6 @@ CREATE TABLE HISTORICO_ESCOLAR (
     FOREIGN KEY (Identificacao_turma) REFERENCES TURMA(Identificacao_turma)
 );
 
--- Criação da tabela PRE_REQUISITO
 CREATE TABLE PRE_REQUISITO (
     Numero_disciplina NVARCHAR(10),
     Numero_pre_requisito NVARCHAR(10),
@@ -82,26 +77,26 @@ INSERT INTO HISTORICO_ESCOLAR (Numero_aluno, Identificacao_turma, Nota) VALUES
 (8, 92, 'A'),
 (8, 102, 'B'),
 (8, 135, 'A'),
-(1, 85, 'A'),   -- Alice Oliveira - Matemática Discreta
-(1, 92, 'B'),   -- Alice Oliveira - Introdução à Ciência da Computação
-(1, 102, 'A'),  -- Alice Oliveira - Estruturas de Dados
-(2, 85, 'C'),   -- Bruno Fernandes - Matemática Discreta
-(2, 92, 'B'),   -- Bruno Fernandes - Introdução à Ciência da Computação
-(3, 119, 'B'),  -- Carla Souza - Introdução à Ciência da Computação
-(3, 135, 'F'),  -- Carla Souza - Banco de Dados (Conceito F)
-(3, 112, 'C'),  -- Carla Souza - Matemática Discreta
-(4, 85, 'A'),   -- Daniel Lima - Matemática Discreta
-(4, 102, 'F'),  -- Daniel Lima - Estruturas de Dados (Conceito F)
-(5, 135, 'B'),  -- Eduardo Pereira - Banco de Dados
-(5, 119, 'A'),  -- Eduardo Pereira - Introdução à Ciência da Computação
-(6, 112, 'C'),  -- Fernanda Costa - Matemática Discreta
-(6, 85, 'F'),   -- Fernanda Costa - Matemática Discreta (Conceito F)
-(7, 102, 'A'),  -- Gabriel Almeida - Estruturas de Dados
-(7, 135, 'F'),  -- Gabriel Almeida - Banco de Dados (Conceito F)
-(9, 119, 'C'),  -- Helena Martins - Introdução à Ciência da Computação
-(9, 92, 'B'),   -- Helena Martins - Introdução à Ciência da Computação
-(10, 102, 'F'), -- Isabela Ribeiro - Estruturas de Dados (Conceito F)
-(10, 85, 'A');  -- Isabela Ribeiro - Matemática Discreta
+(1, 85, 'A'),  
+(1, 92, 'B'),  
+(1, 102, 'A'),  
+(2, 85, 'C'),  
+(2, 92, 'B'),   
+(3, 119, 'B'), 
+(3, 135, 'F'), 
+(3, 112, 'C'), 
+(4, 85, 'A'),   
+(4, 102, 'F'),  
+(5, 135, 'B'),  
+(5, 119, 'A'), 
+(6, 112, 'C'), 
+(6, 85, 'F'),  
+(7, 102, 'A'), 
+(7, 135, 'F'), 
+(9, 119, 'C'), 
+(9, 92, 'B'),  
+(10, 102, 'F'), 
+(10, 85, 'A'); 
 
 INSERT INTO PRE_REQUISITO (Numero_disciplina, Numero_pre_requisito) VALUES 
 ('CC3380', 'CC3320'),
