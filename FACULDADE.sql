@@ -6,7 +6,7 @@ CREATE TABLE ALUNO (
     Nome NVARCHAR(50),
     Numero_aluno INT PRIMARY KEY,
     Tipo_aluno INT,
-    Curso NVARCHAR(2),
+    Curso NVARCHAR(3),
     Data_Nascimento DATE
 );
 
