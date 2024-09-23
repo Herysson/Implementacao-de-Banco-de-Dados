@@ -71,7 +71,7 @@ INSERT INTO TURMA (Identificacao_turma, Numero_disciplina, Semestre, Ano, Profes
 (112, 'MAT2410', 'Segundo', 08, 'Chang'),
 (119, 'CC1310', 'Segundo', 08, 'Anderson'),
 (135, 'CC3380', 'Segundo', 08, 'Santos');
-```
+
 
 INSERT INTO HISTORICO_ESCOLAR (Numero_aluno, Identificacao_turma, Nota) VALUES 
 (17, 112, 'B'),
@@ -79,7 +79,27 @@ INSERT INTO HISTORICO_ESCOLAR (Numero_aluno, Identificacao_turma, Nota) VALUES
 (8, 85, 'A'),
 (8, 92, 'A'),
 (8, 102, 'B'),
-(8, 135, 'A');
+(8, 135, 'A'),
+(1, 85, 'A'),   -- Alice Oliveira - Matemática Discreta
+(1, 92, 'B'),   -- Alice Oliveira - Introdução à Ciência da Computação
+(1, 102, 'A'),  -- Alice Oliveira - Estruturas de Dados
+(2, 85, 'C'),   -- Bruno Fernandes - Matemática Discreta
+(2, 92, 'B'),   -- Bruno Fernandes - Introdução à Ciência da Computação
+(3, 119, 'B'),  -- Carla Souza - Introdução à Ciência da Computação
+(3, 135, 'F'),  -- Carla Souza - Banco de Dados (Conceito F)
+(3, 112, 'C'),  -- Carla Souza - Matemática Discreta
+(4, 85, 'A'),   -- Daniel Lima - Matemática Discreta
+(4, 102, 'F'),  -- Daniel Lima - Estruturas de Dados (Conceito F)
+(5, 135, 'B'),  -- Eduardo Pereira - Banco de Dados
+(5, 119, 'A'),  -- Eduardo Pereira - Introdução à Ciência da Computação
+(6, 112, 'C'),  -- Fernanda Costa - Matemática Discreta
+(6, 85, 'F'),   -- Fernanda Costa - Matemática Discreta (Conceito F)
+(7, 102, 'A'),  -- Gabriel Almeida - Estruturas de Dados
+(7, 135, 'F'),  -- Gabriel Almeida - Banco de Dados (Conceito F)
+(9, 119, 'C'),  -- Helena Martins - Introdução à Ciência da Computação
+(9, 92, 'B'),   -- Helena Martins - Introdução à Ciência da Computação
+(10, 102, 'F'), -- Isabela Ribeiro - Estruturas de Dados (Conceito F)
+(10, 85, 'A');  -- Isabela Ribeiro - Matemática Discreta
 
 INSERT INTO PRE_REQUISITO (Numero_disciplina, Numero_pre_requisito) VALUES 
 ('CC3380', 'CC3320'),
