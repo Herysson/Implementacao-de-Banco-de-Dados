@@ -169,3 +169,25 @@ COMMIT TRANSACTION;
 -- Verificar que os dados persistem
 SELECT * FROM FUNCIONARIO WHERE Cpf = '55544433322';
 ```
+
+## Referências:
+
+Claro! Aqui estão algumas referências que podem apoiar o conteúdo abordado:
+
+1. **Elmasri, R., & Navathe, S. B.** (2016). *Sistemas de Banco de Dados*. 6ª edição. Pearson.  
+   - Este livro oferece uma base sólida sobre transações, propriedades ACID e detalhes sobre gerenciamento de transações em sistemas de banco de dados.
+
+2. **Silberschatz, A., Korth, H., & Sudarshan, S.** (2019). *Sistemas de Banco de Dados*. 7ª edição. McGraw-Hill.
+   - Esta obra explora conceitos avançados de transações, isolamento, integridade de dados, além de práticas de controle de concorrência.
+
+3. **Microsoft SQL Server Documentation**. *Transactions (Transact-SQL)*. Disponível em:  
+   [https://learn.microsoft.com/en-us/sql/t-sql/statements/transactions-transact-sql](https://learn.microsoft.com/en-us/sql/t-sql/statements/transactions-transact-sql)
+   - A documentação oficial do SQL Server detalha os comandos de transação, como `BEGIN TRANSACTION`, `COMMIT`, `ROLLBACK`, e discute a implementação de transações no contexto do SQL Server.
+
+4. **Connolly, T. & Begg, C.** (2015). *Database Systems: A Practical Approach to Design, Implementation, and Management*. 6th edition. Pearson.
+   - Este livro apresenta uma introdução prática a transações em bancos de dados, explicando as propriedades ACID com exemplos e estudos de caso.
+
+5. **Kroenke, D. M., & Auer, D.** (2013). *Database Concepts*. 7th Edition. Pearson.
+   - Esse livro cobre os fundamentos de bancos de dados, com ênfase em como transações e ACID são usados para manter a integridade dos dados em ambientes multiusuário.
+
+Essas fontes oferecem tanto a teoria básica quanto exemplos práticos sobre transações em bancos de dados e propriedades ACID, reforçando o conteúdo discutido na aula.
