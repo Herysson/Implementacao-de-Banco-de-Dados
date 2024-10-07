@@ -1,13 +1,19 @@
 -- Crie uma transação para inserir um novo funcionário e um novo departamento. Caso uma das inserções falhe, reverta a transação completamente.
 BEGIN TRANSACTION;
 
+DECLARE @Erro INT;
+
 -- Insira um novo funcionário
 INSERT INTO FUNCIONARIO (Pnome, Minicial, Unome, Cpf, Datanasc, Endereco, Sexo, Salario, Cpf_supervisor, Dnr)
 VALUES ('Carlos', 'M', 'Almeida', '98765432100', '1991-07-23', 'Av. Brasil, 500', 'M', 4500, NULL, 2);
 
+SET @Erro = @@ERROR;
+
 -- Insira um novo departamento
 INSERT INTO DEPARTAMENTO (Dnumero, Dnome, Cpf_gerente, Data_inicio_gerente)
 VALUES (10, 'Marketing', '98765432100', '2023-09-29');
+
+SET @Erro = @Erro + @@ERROR;
 
 -- Verifique se houve erro
 IF @@ERROR <> 0 
@@ -82,6 +88,10 @@ BEGIN
 END
 
 -- Crie uma transação que atualize o salário de todos os funcionários de um determinado departamento. Se a atualização de qualquer funcionário falhar, reverta todas as alterações.
+-- Alterar o campo salário para estipular um valor máximo para salário.
+ALTER TABLE FUNCIONARIO
+ADD CONSTRAINT CHK_Salario_Max CHECK (Salario >= 56000); -- Maior sário (Jorge do departamento 1)
+    
 BEGIN TRANSACTION;
 
 -- Atualizar salários dos funcionários do departamento 2
