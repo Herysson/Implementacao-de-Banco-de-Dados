@@ -1,6 +1,3 @@
-Aqui está uma explicação detalhada sobre *triggers* no SQL Server e as cláusulas **AFTER** e **INSTEAD OF** que você pode utilizar no início da sua aula:
-
----
 
 ### O que são Triggers no SQL Server?
 
