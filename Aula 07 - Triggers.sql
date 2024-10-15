@@ -25,6 +25,40 @@ VALUES ('32569994563', 'Madalena', 'Silva', 1500.00);
 SELECT * FROM FUNCIONARIO;
 
 -- Exemplo 2
+CREATE TRIGGER trg_instead_of_insert_funcionario
+ON FUNCIONARIO
+INSTEAD OF INSERT
+AS
+BEGIN
+    DECLARE @Pnome VARCHAR(15);
+    DECLARE @Unome VARCHAR(15);
+
+    -- Seleciona os valores que estão sendo inseridos
+    SELECT @Pnome = i.Pnome, @Unome = i.Unome
+    FROM inserted i;
+
+    -- Verifica se já existe uma pessoa com o mesmo primeiro nome e último nome
+    IF EXISTS (
+        SELECT 1
+        FROM FUNCIONARIO
+        WHERE Pnome = @Pnome AND Unome = @Unome
+    )
+    BEGIN
+        -- Se já existe, impede a inserção e exibe a mensagem de erro
+        PRINT 'Funcionário com o mesmo primeiro nome e último nome já existe! A inserção foi cancelada.';
+    END
+    ELSE
+    BEGIN
+        -- Se não existe duplicata, realiza a inserção
+        INSERT INTO FUNCIONARIO (Pnome, Minicial, Unome, Cpf, Datanasc, Endereco, Sexo, Salario, Cpf_supervisor, Dnr)
+        SELECT Pnome, Minicial, Unome, Cpf, Datanasc, Endereco, Sexo, Salario, Cpf_supervisor, Dnr
+        FROM inserted;
+        
+        PRINT 'Funcionário inserido com sucesso!';
+    END
+END;
+GO
+
 
 CREATE TABLE Log_Funcionario (
     LogID INT IDENTITY(1,1) PRIMARY KEY,
