@@ -1,3 +1,31 @@
+
+--Exemplo 1
+ALTER TRIGGER trg_after_insert_funcionario
+ON FUNCIONARIO
+AFTER INSERT
+AS
+BEGIN
+	DECLARE @Cpf CHAR(11),
+			@Pnome VARCHAR(15),
+			@Unome VARCHAR(15),
+			@Salario DECIMAL(10,2);
+	--Recupera o valores contidos na inserção
+	SELECT @Cpf = I.Cpf, @Pnome = I.Pnome, @Unome = I.Unome, @Salario = I.Salario
+	FROM inserted AS I;
+	-- Exibe os valores
+	PRINT 'Funcioinario inserido: ';
+	PRINT 'CPF:' + @Cpf;
+	PRINT 'Nome: ' + @Pnome + ' ' + @Unome;
+	PRINT 'Salario: ' + CAST(@Salario AS VARCHAR(20));
+END;
+
+INSERT INTO FUNCIONARIO (Cpf, Pnome,Unome, Salario)
+VALUES ('32569994563', 'Madalena', 'Silva', 1500.00);
+
+SELECT * FROM FUNCIONARIO;
+
+-- Exemplo 2
+
 CREATE TABLE Log_Funcionario (
     LogID INT IDENTITY(1,1) PRIMARY KEY,
     Cpf CHAR(11),
