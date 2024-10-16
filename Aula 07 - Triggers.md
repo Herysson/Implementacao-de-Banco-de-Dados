@@ -220,5 +220,45 @@ END;
 GO
 ```
 
-Esse *trigger* evita que o sistema permita a exclusão de um gerente associado a um departamento.
+## RAISERROR( )
+
+A função `RAISERROR` no SQL Server é usada para gerar um erro personalizado e exibir uma mensagem ao usuário, interrompendo a execução da transação em andamento, caso seja necessário. A sintaxe básica é:
+
+```sql
+RAISERROR('Mensagem de erro', Severidade, Estado);
+```
+
+Aqui está a explicação detalhada dos três parâmetros:
+
+### 1. **Mensagem de erro:**
+   - O primeiro parâmetro (`'O salário não pode ser menor que R$ 1.000,00.'`) é a mensagem de erro personalizada que será exibida quando o erro for disparado. Nesse caso, a mensagem informa que o salário inserido não é permitido, pois é menor do que R$ 1.000,00.
+
+### 2. **Severidade (16):**
+   - O segundo parâmetro (neste caso, `16`) é o **nível de severidade** do erro. Esse valor indica a gravidade do erro e pode variar de 0 a 25.
+   - No SQL Server, os níveis de severidade têm os seguintes significados:
+     - **0 a 10**: Informativo ou advertências que não causam interrupção na execução. Geralmente usados para mensagens de log ou alertas leves.
+     - **11 a 16**: Erros que indicam um problema com a consulta, como violação de regras de negócios ou erros de sintaxe. Esses erros podem interromper a execução da consulta atual, mas não comprometem o SQL Server em si.
+     - **17 a 25**: Erros graves ou críticos que indicam falhas no servidor, recursos ou corrupção de dados. Esses erros podem interromper transações ou até mesmo causar falhas no servidor.
+
+   - O nível `16`, como no seu exemplo, é comumente usado para erros de aplicação, como violação de regras de negócio. Isso significa que o erro foi causado por algo no código SQL ou nas operações de negócios, e não por uma falha grave no servidor.
+
+### 3. **Estado (1):**
+   - O terceiro parâmetro (neste caso, `1`) é o **estado** do erro. Esse parâmetro é usado para fornecer informações adicionais sobre onde o erro ocorreu dentro da execução da transação.
+   - Normalmente, o valor de estado não tem um impacto funcional significativo, mas pode ser usado para identificar diferentes partes de um código onde o erro pode ter ocorrido. Valores comuns são `0` ou `1`, mas você pode usar outros valores para diferenciar erros dentro de diferentes blocos de código ou condições.
+
+### Exemplo completo:
+No contexto da função que você forneceu:
+
+```sql
+RAISERROR('O salário não pode ser menor que R$ 1.000,00.', 16, 1);
+```
+
+- A mensagem exibirá: `'O salário não pode ser menor que R$ 1.000,00.'`.
+- A severidade `16` indica que este é um erro gerado pelo usuário ou uma violação de regras de negócios, que interromperá a transação atual.
+- O estado `1` é simplesmente um identificador de estado padrão, que você poderia alterar para outro número se quisesse diferenciar este erro de outros semelhantes.
+
+### Efeitos de `RAISERROR`:
+
+- Ao executar `RAISERROR`, o SQL Server exibe a mensagem de erro especificada e pode abortar a transação em andamento (dependendo da severidade e do contexto).
+- Em ambientes onde transações são usadas, como em triggers ou procedimentos armazenados, `RAISERROR` pode ser acompanhado de uma instrução `ROLLBACK` para garantir que a transação seja revertida quando uma violação ocorrer.
 
