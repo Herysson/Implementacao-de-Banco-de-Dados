@@ -108,6 +108,13 @@ END;
 GO
 
 -- Exemplo1 
+CREATE TABLE Log_Funcionario ( 
+LogID INT IDENTITY(1,1) PRIMARY KEY, 
+Cpf CHAR(11), 
+Operacao VARCHAR(10), 
+Data_Hora DATETIME DEFAULT GETDATE() 
+);
+
 CREATE TRIGGER trg_after_insert_funcionario
 ON FUNCIONARIO
 AFTER INSERT
