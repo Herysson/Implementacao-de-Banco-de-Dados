@@ -232,3 +232,45 @@ BEGIN
 END;
 GO
 
+-- Crie um trigger que seja disparado depois que uma operação de inserção, update ou deleção ocorra na tabela FUNCIONARIO. 
+-- Esse trigger deve registrar o CPF do novo funcionário inserido, alterado ou deletado e a operação realizada ("INSERT, DELETE, UPDATE") 
+-- em uma tabela de log (Log_Funcionario), juntamente com a data e hora da inserção. Esse trigger ajudará a manter um histórico 
+-- das inserções realizadas na tabela de funcionários.
+
+CREATE TRIGGER trg_log_operations_funcionario
+ON FUNCIONARIO
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Verifica se houve uma operação de DELETE
+    IF EXISTS (SELECT * FROM deleted)
+    BEGIN
+        -- Inserindo no log para DELETE
+        INSERT INTO Log_Funcionario (Cpf, Operacao, Data_Hora)
+        SELECT Cpf, 'DELETE', GETDATE()
+        FROM deleted;
+    END
+
+    -- Verifica se houve uma operação de INSERT ou UPDATE
+    IF EXISTS (SELECT * FROM inserted)
+    BEGIN
+        -- Verifica se a operação foi UPDATE ou INSERT
+        IF EXISTS (SELECT * FROM deleted)
+        BEGIN
+            -- Inserindo no log para UPDATE
+            INSERT INTO Log_Funcionario (Cpf, Operacao, Data_Hora)
+            SELECT Cpf, 'UPDATE', GETDATE()
+            FROM inserted;
+        END
+        ELSE
+        BEGIN
+            -- Inserindo no log para INSERT
+            INSERT INTO Log_Funcionario (Cpf, Operacao, Data_Hora)
+            SELECT Cpf, 'INSERT', GETDATE()
+            FROM inserted;
+        END
+    END
+END;
+GO
+
+
