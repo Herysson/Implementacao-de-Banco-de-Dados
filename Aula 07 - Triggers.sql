@@ -55,6 +55,38 @@ VALUES ('32569994563', 'Madalena', 'Silva', 1500.00);
 SELECT * FROM FUNCIONARIO;
 
 -- Exemplo 2
+--Crie um tregger que não permita a inserção de um funcionário
+--com o mesmo nome completo (Pnome + Minicial + Unome)
+ALTER TRIGGER trg_after_insert_funcionario
+ON FUNCIONARIO
+AFTER INSERT
+AS
+BEGIN
+	DECLARE @Pnome VARCHAR(50),
+			@Minicial CHAR(1),
+			@Unome VARCHAR(50),
+			@Dubplicados INT;
+	SELECT @Dubplicados = COUNT(*)
+	FROM(
+		SELECT Pnome, Unome,Minicial
+		FROM FUNCIONARIO
+		GROUP BY Pnome, Unome,Minicial
+		HAVING COUNT(*)>1	
+	) AS Duplicados;
+
+	IF @Dubplicados > 0
+	BEGIN
+		PRINT 'Já existe um fincionário com o nome: ' + @Pnome+@Minicial+@Unome
+		ROLLBACK TRANSACTION;
+	END
+	ELSE
+	BEGIN
+		COMMIT TRANSACTION;
+		PRINT 'novo registro inserido'
+	END		
+END
+
+-- INSTEAD OF --
 CREATE TRIGGER trg_instead_of_insert_funcionario
 ON FUNCIONARIO
 INSTEAD OF INSERT
