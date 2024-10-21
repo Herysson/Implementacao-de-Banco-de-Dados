@@ -1,3 +1,33 @@
+ALTER TRIGGER trg_after_update_funcionario
+ON FUNCIONARIO
+AFTER INSERT, UPDATE
+AS
+BEGIN
+	DECLARE @NomeAntigo VARCHAR(50),
+			@NomeNovo VARCHAR(50);
+	IF UPDATE(Pnome)
+	BEGIN
+		SELECT @NomeNovo = I.Pnome
+		FROM inserted AS I;
+		SELECT @NomeAntigo = D.Pnome
+		FROM deleted AS D;
+		PRINT 'O nome foi alterado ';
+		PRINT 'Antigo: '+ @NomeAntigo;
+		PRINT 'Novo: ' + @NomeNovo;
+	END
+	ELSE
+		PRINT 'O nome não foi alterado'
+END
+
+INSERT INTO FUNCIONARIO (Pnome,Minicial, Unome, Cpf)
+VALUES ('Heitor', 'R', 'Figueiredo', 01457889632);
+
+UPDATE FUNCIONARIO
+SET Pnome = 'Hercules'
+WHERE Cpf = '1457889632';
+
+SELECT * FROM FUNCIONARIO;
+
 
 --Exemplo 1
 ALTER TRIGGER trg_after_insert_funcionario
