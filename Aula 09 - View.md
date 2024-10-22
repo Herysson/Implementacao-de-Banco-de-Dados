@@ -92,6 +92,12 @@ DROP VIEW FuncionariosVendas;
 2. **View de Salários por Departamento**: Crie uma view que exiba a média salarial por departamento.
 
 3. **View de Projetos Ativos**: Crie uma view que liste os projetos ativos, ou seja, aqueles que estão em andamento.
+   
+5. **Funcionários com Alto Desempenho:** Crie uma view que liste os funcionários que trabalharam em mais de 3 projetos nos últimos 6 meses. Inclua as colunas de nome, CPF e o número de projetos em que o funcionário participou.
+
+6. **Funcionários Perto da Aposentadoria:** Crie uma view que liste os funcionários que estão a menos de 5 anos de se aposentar (assumindo que a idade de aposentadoria seja 65 anos). Inclua nome, CPF e o número de anos restantes para a aposentadoria.
+   
+8. **Funcionários Sem Aumento nos Últimos 2 Anos:** Crie uma view que liste os funcionários que não receberam aumento nos últimos dois anos. Exiba o nome do funcionário, CPF, e a data do último aumento.
 
 
 ### Exercício 2: Subconsultas (Subqueries)
@@ -113,4 +119,12 @@ Neste exemplo, a subconsulta retorna a média salarial de todos os funcionários
 1. **Funcionários Acima da Média Salarial**: Liste todos os funcionários que ganham mais do que a média salarial do departamento em que trabalham.
 
 2. **Projetos Com Mais de 5 Funcionários**: Liste os nomes dos projetos que têm mais de 5 funcionários alocados.
+   
+4. **Projetos com Mais de 3 Funcionários:** Crie uma subconsulta que liste os projetos que possuem mais de 10 funcionários alocados e ordene-os pelo nome do projeto.
+
+5. **Média de Salário por Departamento:** Liste os departamentos onde a média salarial é maior que a média geral da empresa. Utilize uma subconsulta para calcular a média geral e compare com a média por departamento.
+
+#### Desafio: Views e Subconsultas
+
+**Monitoramento de Performance de Funcionários e Projetos:** Crie uma view que mostre a performance dos funcionários com base na quantidade de projetos em que estão alocados, comparando com a média de participação em projetos de outros funcionários do mesmo departamento.
 
