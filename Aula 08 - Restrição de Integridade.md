@@ -1,14 +1,10 @@
 
-# Aula sobre Restrições de Integridade
-
-## Conteúdo Teórico
-
-### O que é Integridade de Dados?
+## O que é Integridade de Dados?
 A integridade de dados refere-se à manutenção e garantia da consistência e precisão dos dados, um aspecto crítico no design, implementação e uso de sistemas de armazenamento de dados. A integridade é atingida através da aplicação de diversas restrições que asseguram que os dados inseridos em um banco estejam corretos e consistentes ao longo do tempo.
 
-### Tipos de Restrições de Integridade
+## Tipos de Restrições de Integridade
 
-#### 1. Integridade de Domínio
+### 1. Integridade de Domínio
 A integridade de domínio especifica que o valor de cada atributo em uma tabela deve ser indivisível dentro de um domínio específico. Por exemplo, em uma coluna que armazena preços de mercadorias, os valores admitidos são do domínio numérico — ou seja, apenas números.
 
 Exemplo de restrição de domínio:
@@ -21,7 +17,7 @@ CREATE TABLE Produtos (
 ```
 Este exemplo garante que o valor da coluna `preco` sempre será um número positivo.
 
-#### 2. Integridade Referencial
+### 2. Integridade Referencial
 A integridade referencial assegura que as relações entre tabelas permaneçam consistentes. Quando uma tabela contém uma chave estrangeira, essa chave deve corresponder a um valor existente na tabela referenciada.
 
 Exemplo de restrição referencial:
@@ -34,7 +30,7 @@ CREATE TABLE Vendas (
 ```
 Neste exemplo, a venda de um produto só é permitida se o produto já estiver cadastrado na tabela `Produtos`.
 
-#### 3. Integridade de Vazio (NULL)
+### 3. Integridade de Vazio (NULL)
 Essa restrição define se uma coluna pode aceitar valores nulos. Colunas que fazem parte de uma chave primária, por exemplo, não podem aceitar valores nulos.
 
 Exemplo de integridade de vazio:
@@ -47,7 +43,7 @@ CREATE TABLE Funcionarios (
 ```
 Aqui, a coluna `nome_funcionario` não pode ser nula, ou seja, todo funcionário deve ter um nome registrado.
 
-#### 4. Integridade de Chave
+### 4. Integridade de Chave
 A integridade de chave garante que os valores de uma chave primária sejam únicos em toda a tabela e que esses valores nunca sejam nulos.
 
 Exemplo de integridade de chave:
@@ -59,7 +55,7 @@ CREATE TABLE Departamentos (
 ```
 Neste exemplo, a coluna `id_departamento` deve ser única e sempre conter um valor.
 
-#### 5. Integridade Definida pelo Usuário
+### 5. Integridade Definida pelo Usuário
 A integridade definida pelo usuário permite criar restrições personalizadas para atender às necessidades específicas do negócio. Por exemplo, pode-se definir que uma coluna só aceitará um conjunto restrito de valores.
 
 Exemplo de integridade definida pelo usuário:
