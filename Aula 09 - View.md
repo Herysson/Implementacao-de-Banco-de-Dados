@@ -89,30 +89,10 @@ DROP VIEW FuncionariosVendas;
 
 1. **View de Funcionários Sem Supervisores**: Crie uma view que liste todos os funcionários que não possuem supervisores. Utilize a coluna `Cpf_supervisor` para verificar quais funcionários não têm supervisores.
 
-```sql
-CREATE VIEW FuncionariosSemSupervisores AS
-SELECT Pnome, Unome, Salario
-FROM Funcionarios
-WHERE Cpf_supervisor IS NULL;
-```
-
 2. **View de Salários por Departamento**: Crie uma view que exiba a média salarial por departamento.
-
-```sql
-CREATE VIEW MediaSalarialPorDepartamento AS
-SELECT Dnr, AVG(Salario) AS MediaSalarial
-FROM Funcionarios
-GROUP BY Dnr;
-```
 
 3. **View de Projetos Ativos**: Crie uma view que liste os projetos ativos, ou seja, aqueles que estão em andamento.
 
-```sql
-CREATE VIEW ProjetosAtivos AS
-SELECT Nome_projeto, Dnum
-FROM Projeto
-WHERE Status = 'Ativo';
-```
 
 ### Exercício 2: Subconsultas (Subqueries)
 
@@ -132,21 +112,5 @@ Neste exemplo, a subconsulta retorna a média salarial de todos os funcionários
 
 1. **Funcionários Acima da Média Salarial**: Liste todos os funcionários que ganham mais do que a média salarial do departamento em que trabalham.
 
-```sql
-SELECT Pnome, Unome, Salario
-FROM Funcionarios F
-WHERE Salario > (SELECT AVG(Salario) 
-                 FROM Funcionarios 
-                 WHERE Dnr = F.Dnr);
-```
-
 2. **Projetos Com Mais de 5 Funcionários**: Liste os nomes dos projetos que têm mais de 5 funcionários alocados.
-
-```sql
-SELECT Nome_projeto
-FROM Projeto
-WHERE (SELECT COUNT(*) 
-       FROM Trabalha_em 
-       WHERE Numero_projeto = Projeto.Numero_projeto) > 5;
-```
 
