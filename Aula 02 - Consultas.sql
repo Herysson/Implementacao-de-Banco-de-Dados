@@ -83,6 +83,23 @@ WHERE Salario = (
 SELECT COUNT (FUNCIONARIO.Cpf)
 FROM FUNCIONARIO;
 
+SELECT 
+  (SELECT COUNT(*) FROM FUNCIONARIO) + 
+  (SELECT COUNT(*) FROM DEPENDENTE) AS total_pessoas;
+
+SELECT 
+  (SELECT COUNT(*) FROM FUNCIONARIO) AS total_funcionarios,
+  (SELECT COUNT(*) FROM DEPENDENTE) AS total_dependentes,
+  (SELECT COUNT(*) FROM FUNCIONARIO) + (SELECT COUNT(*) FROM DEPENDENTE) AS total_pessoas;
+
+DECLARE @total_funcionarios INT;
+DECLARE @total_dependentes INT;
+
+SET @total_funcionarios = (SELECT COUNT(*) FROM FUNCIONARIO);
+SET @total_dependentes = (SELECT COUNT(*) FROM DEPENDENTE);
+PRINT @total_funcionarios + @total_dependentes;
+SELECT @total_funcionarios + @total_dependentes AS total_pessoas;
+
 -- AVG
 DECLARE @Salario_AVG DECIMAL(10,2)
 SET @Salario_AVG  = (SELECT AVG(Salario)
