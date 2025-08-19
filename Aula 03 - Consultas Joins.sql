@@ -129,8 +129,22 @@ FULL JOIN
 ON 
     FUNCIONARIO.Dnr = DEPARTAMENTO.Dnumero;
 
+-- SELF JOIN
+SELECT
+    F.Pnome AS Nome_Funcionario,
+    F.Unome AS Sobrenome_Funcionario,
+    
+    S.Pnome AS Nome_Supervisor,
+    S.Unome AS Sobrenome_Supervisor
+FROM
+    FUNCIONARIO AS F
+    
+JOIN
+    FUNCIONARIO AS S ON F.Cpf_supervisor = S.Cpf;
+
+
 --  UNION/INTERSECT/EXCEPT
--- UNION: Combina os resultados de duas ou mais consultas em uma única tabela, eliminando duplicatas
+-- UNION: 
 -- Listar todos os nomes únicos de projetos e departamentos.
 SELECT Dnome AS Nome
 FROM DEPARTAMENTO
@@ -139,6 +153,46 @@ UNION
 
 SELECT Projnome AS Nome
 FROM PROJETO;
+
+--Imagine que a diretoria da empresa quer uma lista de todas as cidades onde a empresa possui alguma atividade, seja a localização de um departamento ou a localização de um projeto.
+SELECT Dlocal AS Cidade
+FROM LOCALIZACAO_DEP
+
+UNION 
+
+SELECT Projlocal AS Cidade
+FROM PROJETO;
+
+-- UNION ALL
+
+SELECT Dlocal AS Cidade
+FROM LOCALIZACAO_DEP
+
+UNION ALL
+
+SELECT Projlocal AS Cidade
+FROM PROJETO;
+
+-- EXCEPT: Retorna as linhas da primeira consulta que não estão presentes na segunda consulta.
+-- Listar os CPFs dos funcionários que não são gerentes de nenhum departamento.
+SELECT Cpf
+FROM FUNCIONARIO
+
+EXCEPT
+
+SELECT Cpf_gerente
+FROM DEPARTAMENTO;
+
+-- Encontre os Funcionários que NÃO são Supervisores
+SELECT Pnome, Unome
+FROM FUNCIONARIO
+WHERE Cpf IN (
+    SELECT Cpf FROM FUNCIONARIO
+    
+    EXCEPT 
+    
+    SELECT Cpf_supervisor FROM FUNCIONARIO WHERE Cpf_supervisor IS NOT NULL
+);
 
 -- INTERSECT: Retorna apenas as linhas que aparecem em ambas as consultas.
 -- Encontrar CPF de funcionários que também são gerentes de departamento.
@@ -151,15 +205,17 @@ INTERSECT
 SELECT Cpf_gerente
 FROM DEPARTAMENTO;
 
--- EXCEPT: Retorna as linhas da primeira consulta que não estão presentes na segunda consulta.
--- Listar os CPFs dos funcionários que não são gerentes de nenhum departamento.
-SELECT Cpf
+-- Encontre os Funcionários que são Supervisores
+SELECT Pnome, Unome
 FROM FUNCIONARIO
+WHERE Cpf IN (
+    SELECT Cpf FROM FUNCIONARIO
+    
+    INTERSECT 
 
-EXCEPT
+    SELECT Cpf_supervisor FROM FUNCIONARIO
+);
 
-SELECT Cpf_gerente
-FROM DEPARTAMENTO;
 
 --GROUP BY
 --Contar o número de funcionários por departamento
@@ -313,6 +369,7 @@ HAVING
         WHERE PROJETO.Projlocal = 'São Paulo'
         GROUP BY PROJETO.Projnumero
     );
+
 
 
 
