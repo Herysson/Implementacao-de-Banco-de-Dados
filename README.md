@@ -52,6 +52,7 @@ Nesta unidade, aprenderemos sobre:
 - [Documentação do MySQL](https://dev.mysql.com/doc/)
 - [Documentação do Oracle Database](https://docs.oracle.com/en/database/)
 - [Documentação do SQL Server](https://docs.microsoft.com/pt-br/sql/sql-server/)
+- [Instalação do SQL Server](https://www.youtube.com/watch?v=QOXiRS1yWhE)
 
 ## Como Contribuir
 
