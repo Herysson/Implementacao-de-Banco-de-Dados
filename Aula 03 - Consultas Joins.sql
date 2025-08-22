@@ -1,26 +1,4 @@
-
--- JOIN
-
---INNER JOIN
-SELECT Pnome, Unome, Dnome 
-FROM Funcionario 
-INNER JOIN Departamento ON Dnumero = Dnr 
-WHERE Dnome = “Pesquisa”
-
-SELECT F.Pnome, P.Projnome
-FROM Funcionario AS F
-INNER JOIN TRABALHA_EM AS T ON F.Cpf = T.Fcpf
-INNER JOIN PROJETO AS P ON T.Pnr = P.Projnumero
-WHERE P.Projnome = “ProdutoX”;
-
-SELECT Projnumero, Dnum, Unome,
-Endereco, Datanasc
-FROM ((PROJETO JOIN DEPARTAMENTO
-ON Dnum=Dnumero) JOIN
-FUNCIONARIO ON
-Cpf_gerente =Cpf)
-WHERE Projlocal=‘Mauá’;
-
+--Populando o banco com novos Funcionarios / Departamentos
 INSERT INTO FUNCIONARIO (Pnome, Minicial, Unome, Cpf, Datanasc, Endereco, Sexo, Salario, Cpf_supervisor, Dnr)
 VALUES ('Carlos', 'M', 'Ferreira', '12312312311', '1980-02-15', 'Av. Paulista, 1000, São Paulo, SP', 'M', 45000, NULL, NULL),
 ('Mariana', 'L', 'Gomes', '32132132122', '1985-06-22', 'Rua das Acácias, 500, Rio de Janeiro, RJ', 'F', 42000, NULL, NULL),
@@ -30,6 +8,26 @@ INSERT INTO DEPARTAMENTO (Dnome, Dnumero)
 VALUES ('Vendas', 6),
 ('RH', 7),
 ('TI', 8);
+
+--INNER JOIN
+SELECT Pnome, Unome, Dnome 
+FROM Funcionario 
+INNER JOIN Departamento ON Dnumero = Dnr 
+WHERE Dnome = 'Pesquisa'
+
+SELECT F.Pnome, P.Projnome
+FROM Funcionario AS F
+INNER JOIN TRABALHA_EM AS T ON F.Cpf = T.Fcpf
+INNER JOIN PROJETO AS P ON T.Pnr = P.Projnumero
+WHERE P.Projnome = 'ProdutoX';
+
+SELECT Projnumero, Dnum, Unome,
+Endereco, Datanasc
+FROM ((PROJETO JOIN DEPARTAMENTO
+ON Dnum=Dnumero) JOIN
+FUNCIONARIO ON
+Cpf_gerente =Cpf)
+WHERE Projlocal=‘Mauá’;
 
 --LEFT JOIN 
 -- Econtre os funcionarios que não possuem um departamento a eles vinculado
@@ -369,6 +367,7 @@ HAVING
         WHERE PROJETO.Projlocal = 'São Paulo'
         GROUP BY PROJETO.Projnumero
     );
+
 
 
 
