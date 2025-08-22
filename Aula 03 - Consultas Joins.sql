@@ -10,24 +10,31 @@ VALUES ('Vendas', 6),
 ('TI', 8);
 
 --INNER JOIN
-SELECT Pnome, Unome, Dnome 
-FROM Funcionario 
-INNER JOIN Departamento ON Dnumero = Dnr 
-WHERE Dnome = 'Pesquisa'
+--Selecionar o primeiro nome, último nome, endereço dos funcionários que trabalham no departamento de “Pesquisa”.
+SELECT F.Pnome, F.Unome, D.Dnome 
+FROM Funcionario AS F
+INNER JOIN Departamento AS D 
+    ON Dnumero = Dnr 
+WHERE Dnome = 'Pesquisa';
 
+--Liste o nome dos funcionários que estão desenvolvendo o “ProdutoX”. 
 SELECT F.Pnome, P.Projnome
 FROM Funcionario AS F
-INNER JOIN TRABALHA_EM AS T ON F.Cpf = T.Fcpf
-INNER JOIN PROJETO AS P ON T.Pnr = P.Projnumero
+INNER JOIN TRABALHA_EM AS T 
+    ON F.Cpf = T.Fcpf
+INNER JOIN PROJETO AS P 
+    ON T.Pnr = P.Projnumero
 WHERE P.Projnome = 'ProdutoX';
 
+--Para cada projeto localizado em “Mauá”, liste o número do projeto, o número do departamento que o controla e o sobrenome, endereço e data de nascimento do gerente do departamento.
 SELECT Projnumero, Dnum, Unome,
 Endereco, Datanasc
-FROM ((PROJETO JOIN DEPARTAMENTO
-ON Dnum=Dnumero) JOIN
-FUNCIONARIO ON
-Cpf_gerente =Cpf)
-WHERE Projlocal=‘Mauá’;
+FROM PROJETO 
+INNER JOIN DEPARTAMENTO
+ON Dnum=Dnumero 
+INNER JOIN FUNCIONARIO 
+ON Cpf_gerente =Cpf
+WHERE Projlocal='Mauá';
 
 --LEFT JOIN 
 -- Econtre os funcionarios que não possuem um departamento a eles vinculado
@@ -43,15 +50,11 @@ SELECT
     FUNCIONARIO.Cpf_supervisor,
     FUNCIONARIO.Dnr,
     DEPARTAMENTO.Dnome
-FROM 
-    FUNCIONARIO
-LEFT JOIN 
-    DEPARTAMENTO 
-ON 
-    FUNCIONARIO.Dnr = DEPARTAMENTO.Dnumero;
+FROM FUNCIONARIO
+LEFT JOIN DEPARTAMENTO 
+    ON  FUNCIONARIO.Dnr = DEPARTAMENTO.Dnumero;
 
--- Encontre os departamentos que ~não possuem nenhum funcionário
--- Exemplo 1
+-- Encontre os departamentos que não possuem nenhum funcionário
 SELECT 
     DEPARTAMENTO.Dnome,
     DEPARTAMENTO.Dnumero
@@ -248,6 +251,7 @@ JOIN
     PROJETO ON TRABALHA_EM.Pnr = PROJETO.Projnumero
 GROUP BY 
     PROJETO.Projnome;
+
 -- Quantidade de funcionários por sexo
 SELECT 
     Sexo, 
@@ -291,7 +295,7 @@ GROUP BY
 HAVING 
     COUNT(FUNCIONARIO.Cpf) > 3;
 
--- Listar projetos que exigem mais de 100 horas de trabalho no total
+-- Listar projetos que exigem mais de no mínimo 50 horas de trabalho no total
 SELECT 
     PROJETO.Projnome, 
     SUM(TRABALHA_EM.Horas) AS TotalHoras
@@ -302,7 +306,7 @@ JOIN
 GROUP BY 
     PROJETO.Projnome
 HAVING 
-    SUM(TRABALHA_EM.Horas) > 100;
+    SUM(TRABALHA_EM.Horas) >= 50;
 
 -- EXISTIS
 -- Listar funcionários que são gerentes de algum departamento
@@ -367,6 +371,7 @@ HAVING
         WHERE PROJETO.Projlocal = 'São Paulo'
         GROUP BY PROJETO.Projnumero
     );
+
 
 
 
