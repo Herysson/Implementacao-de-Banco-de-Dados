@@ -117,12 +117,14 @@ SELECT	'O funcionário '
 		+ ' tem um salário de: R$ ' 
 		+ CONVERT(VARCHAR(20), Salario) AS 'Nome / Salário'
 FROM Funcionarios;
+
 -- Usando CONVERT para formatar a data de nascimento no formato DD/MM/YYYY
 SELECT	'O funcionário '
 		+ Nome
 		+ ' nasceu em: '
 		+ CONVERT(VARCHAR(10), Data_Nasc, 103) AS 'Nome / Data de Nascimento'
 FROM Funcionarios;
+
 -- Usando CAST para converter o resultado de um cálculo de idade em uma string
 DECLARE @Ano_Atual INT = 2024;
 
@@ -301,3 +303,25 @@ IF DATEDIFF(MONTH, @Data_Admissao, GETDATE()) <= 6
 	PRINT @Nome_Funcionario + ' é um(a) novo(a) contratado(a).';
 ELSE
 	PRINT @Nome_Funcionario + ' já está na empresa há mais de 6 meses.';
+
+DECLARE @QtdFuncionarios INT;
+
+-- Conta quantos funcionários estão no departamento 5
+SELECT @QtdFuncionarios = COUNT(*)
+FROM FUNCIONARIO
+WHERE Dnr = 5;
+
+-- Agora, usa o IF para decidir o que fazer
+IF @QtdFuncionarios > 5
+BEGIN
+    PRINT 'O departamento de Pesquisa tem uma equipe grande!';
+END
+ELSE IF @QtdFuncionarios > 0 AND @QtdFuncionarios <= 5
+BEGIN
+    PRINT 'O departamento de Pesquisa tem uma equipe de tamanho padrão.';
+    PRINT 'Quantidade de funcionários: ' + CAST(@QtdFuncionarios AS VARCHAR);
+END
+ELSE
+BEGIN
+    PRINT 'Atenção: Não há funcionários alocados no departamento de Pesquisa.';
+END
