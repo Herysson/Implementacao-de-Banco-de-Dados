@@ -166,10 +166,12 @@ INSERT INTO DEPENDENTE VALUES ('12345678966', 'Elizabeth', 'F', '1967-05-05', 'E
 -- Adicionando a coluna Bonus
 ALTER TABLE FUNCIONARIO
 ADD Bonus DECIMAL(10, 2) NULL;
+GO
 
 -- Adicionando a coluna Data_Admissao
 ALTER TABLE FUNCIONARIO
 ADD Data_Admissao DATE NULL;
+GO
 
 
 -- Inserindo novos registros com valores para as colunas Bonus e Data_Admissao
@@ -179,6 +181,7 @@ VALUES
 ('Ana', 'B', 'Sousa', '98765432200', '1990-06-23', 'Rua B, 456', 'F', 6500.00, '98765432100', 1, '2022-01-15', 0.00),
 ('Maria', 'C', 'Oliveira', '98765432300', '1978-09-17', 'Rua C, 789', 'F', 7500.00, '98765432200', 5, '2024-02-01', 1500.00),
 ('Paulo', 'D', 'Silva', '98765432400', '1982-11-05', 'Rua D, 101', 'M', 7000.00, '98765432300', 4, '2024-05-15', 500.00);
+GO
 */
 /*
 --Novos funcionario e departaemtneo para Aula 03
