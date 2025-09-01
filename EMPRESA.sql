@@ -161,8 +161,7 @@ INSERT INTO DEPENDENTE VALUES ('12345678966', 'Michael', 'M', '1988-01-04', 'Fil
 INSERT INTO DEPENDENTE VALUES ('12345678966', 'Alicia', 'F', '1988-12-30', 'Filha');
 INSERT INTO DEPENDENTE VALUES ('12345678966', 'Elizabeth', 'F', '1967-05-05', 'Esposa');
 
-/*
--- Execute estes comando para a aula de IF/ELSE
+-- Estes comando para a aula de IF/ELSE
 -- Adicionando a coluna Bonus
 ALTER TABLE FUNCIONARIO
 ADD Bonus DECIMAL(10, 2) NULL;
@@ -182,17 +181,18 @@ VALUES
 ('Maria', 'C', 'Oliveira', '98765432300', '1978-09-17', 'Rua C, 789', 'F', 7500.00, '98765432200', 5, '2024-02-01', 1500.00),
 ('Paulo', 'D', 'Silva', '98765432400', '1982-11-05', 'Rua D, 101', 'M', 7000.00, '98765432300', 4, '2024-05-15', 500.00);
 GO
-*/
-/*
+
+
 --Novos funcionario e departaemtneo para Aula 03
 INSERT INTO FUNCIONARIO (Pnome, Minicial, Unome, Cpf, Datanasc, Endereco, Sexo, Salario, Cpf_supervisor, Dnr)
 VALUES ('Carlos', 'M', 'Ferreira', '12312312311', '1980-02-15', 'Av. Paulista, 1000, São Paulo, SP', 'M', 45000, NULL, NULL),
 ('Mariana', 'L', 'Gomes', '32132132122', '1985-06-22', 'Rua das Acácias, 500, Rio de Janeiro, RJ', 'F', 42000, NULL, NULL),
 ('Pedro', 'A', 'Silva', '65465465433', '1990-11-10', 'Rua da Praia, 200, Salvador, BA', 'M', 47000, NULL, NULL);
+GO
 
 INSERT INTO DEPARTAMENTO (Dnome, Dnumero)
 VALUES ('Vendas', 6),
 ('RH', 7),
 ('TI', 8);
+GO
 
-*/
