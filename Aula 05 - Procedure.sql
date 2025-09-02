@@ -31,7 +31,7 @@ RETURN
 
 SELECT * FROM dbo.fn_FuncionariosPorDepartamento(5);
 
--- Criar uma função que retorna funcionários e o valor do salário anual, com férias e decimo terceiro
+-- Criar uma função que retorna nome completo dos funcionários e o valor do salário anual, com férias e decimo terceiro
 CREATE FUNCTION fn_SalarioAnual()
 RETURNS @Tabela TABLE
 (
@@ -53,6 +53,28 @@ END;
 
 SELECT * FROM dbo.fn_SalarioAnual();
 
+-- Queremos calcular o salário anual de um funcionário (12 meses), mas também considerar um bônus variável (%), passado como parâmetro.
+CREATE FUNCTION fn_SalarioAnualComBonus(
+    @Salario DECIMAL(10,2),
+    @BonusPercentual DECIMAL(5,2)  -- Ex: 10 = 10%
+)
+RETURNS DECIMAL(10,2)
+AS
+BEGIN
+    DECLARE @SalarioAnual DECIMAL(10,2);
+
+    SET @SalarioAnual = (@Salario * 12) * (1 + @BonusPercentual / 100.0);
+
+    RETURN @SalarioAnual;
+END;
+
+SELECT 
+    Pnome, 
+    Unome,
+    Salario,
+    dbo.fn_SalarioAnualComBonus(Salario, 10) AS Salario_Anual_10pct,
+    dbo.fn_SalarioAnualComBonus(Salario, 20) AS Salario_Anual_20pct
+FROM FUNCIONARIO;
 
 -- Exemplo 1
 CREATE PROCEDURE ExibirMeuNome
