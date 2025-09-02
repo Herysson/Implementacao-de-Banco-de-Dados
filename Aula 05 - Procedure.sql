@@ -1,3 +1,59 @@
+--Funções
+-- Criar uma função que calcula a idade de um funcionário com base na data de nascimento
+CREATE FUNCTION fn_CalculaIdade(@DataNasc DATE)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @Idade INT;
+    SET @Idade = DATEDIFF(YEAR, @DataNasc, GETDATE());
+    
+    -- Ajuste caso ainda não tenha feito aniversário no ano
+    IF (MONTH(@DataNasc) > MONTH(GETDATE()) 
+       OR (MONTH(@DataNasc) = MONTH(GETDATE()) AND DAY(@DataNasc) > DAY(GETDATE())))
+       SET @Idade = @Idade - 1;
+
+    RETURN @Idade;
+END;
+
+SELECT Pnome, Unome, dbo.fn_CalculaIdade(Datanasc) AS Idade
+FROM FUNCIONARIO;
+
+-- Retornar todos os funcionários de um determinado departamento.
+CREATE FUNCTION fn_FuncionariosPorDepartamento(@Dnr INT)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT F.Pnome, F.Unome, F.Salario
+    FROM FUNCIONARIO F
+    WHERE F.Dnr = @Dnr
+);
+
+SELECT * FROM dbo.fn_FuncionariosPorDepartamento(5);
+
+-- Criar uma função que retorna funcionários e o valor do salário anual, com férias e decimo terceiro
+CREATE FUNCTION fn_SalarioAnual()
+RETURNS @Tabela TABLE
+(
+    NomeCompleto VARCHAR(100),
+    SalarioMensal DECIMAL(10,2),
+    SalarioAnual DECIMAL(10,2)
+)
+AS
+BEGIN
+    INSERT INTO @Tabela
+    SELECT 
+        CONCAT(Pnome, ' ', Unome),
+        Salario,
+        Salario * 12
+    FROM FUNCIONARIO;
+
+    RETURN;
+END;
+
+SELECT * FROM dbo.fn_SalarioAnual();
+
+
 -- Exemplo 1
 CREATE PROCEDURE ExibirMeuNome
 AS
