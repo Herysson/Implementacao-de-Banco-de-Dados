@@ -18,6 +18,24 @@ END;
 SELECT Pnome, Unome, dbo.fn_CalculaIdade(Datanasc) AS Idade
 FROM FUNCIONARIO;
 
+--Funções
+-- Alterar uma função 
+ALTER FUNCTION fn_CalculaIdade(@DataNasc DATE)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @Idade INT;
+    SET @Idade = DATEDIFF(YEAR, @DataNasc, GETDATE());
+    
+    -- Ajuste caso ainda não tenha feito aniversário no ano
+    IF (MONTH(@DataNasc) > MONTH(GETDATE()) 
+       OR (MONTH(@DataNasc) = MONTH(GETDATE()) AND DAY(@DataNasc) > DAY(GETDATE())))
+       SET @Idade = @Idade - 1;
+
+    RETURN @Idade;
+END;
+
+
 -- Retornar todos os funcionários de um determinado departamento.
 CREATE FUNCTION fn_FuncionariosPorDepartamento(@Dnr INT)
 RETURNS TABLE
