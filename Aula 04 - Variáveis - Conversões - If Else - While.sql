@@ -325,3 +325,17 @@ ELSE
 BEGIN
     PRINT 'Atenção: Não há funcionários alocados no departamento de Pesquisa.';
 END
+
+-- While
+DECLARE @salario DECIMAL(10,2);
+
+SELECT @salario = F.Salario
+FROM FUNCIONARIO AS F
+WHERE F.Pnome = 'Joice' AND F.Unome = 'Leite';
+
+WHILE (@salario <= 30000)
+	BEGIN
+		PRINT @salario;
+		SET @salario = @salario*1.05;
+	END;
+PRINT @salario;
