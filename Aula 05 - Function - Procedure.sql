@@ -95,17 +95,17 @@ SELECT
 FROM FUNCIONARIO;
 
 -- Exemplo 1
-CREATE PROCEDURE ExibirMeuNome
+CREATE PROCEDURE sp_exibir_meu_nome
 AS
 BEGIN
     PRINT 'Herysson R. Figueiredo';
 END;
 --Execução
-EXEC ExibirMeuNome;
+EXEC sp_exibir_meu_nome;
 
 
 --Stored Procedure para Consulta de Funcionários por Departamento
-CREATE PROCEDURE ListarFuncionariosEDepartamentos
+CREATE PROCEDURE sp_listar_funcionarios_departamentos
 AS
 BEGIN
     SELECT 
@@ -116,10 +116,10 @@ BEGIN
 END;
 
 --Executando a procedure
-EXEC ListarFuncionariosPorDepartamento;
+EXEC sp_listar_funcionarios_departamentos;
 
 --Visualizar conteúdo de SP
-EXEC sp_helptext ListarFuncionariosPorDepartamento;
+EXEC sp_helptext sp_listar_funcionarios_departamentos;
 
 --Criptografar Stored Procedure
 CREATE PROCEDURE sp_Funcionario
