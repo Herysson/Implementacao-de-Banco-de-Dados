@@ -36,10 +36,10 @@ GO
 
 --SELECT para colocar valor em uma variável
 -- Declarando variáveis
-DECLARE @Nome_Funcionario VARCHAR(100),
+DECLARE @NomeFuncionario VARCHAR(100),
         @Salario DECIMAL(10, 2),
         @Aumento DECIMAL(10, 2),
-        @Novo_Salario DECIMAL(10, 2);
+        @NovoSalario DECIMAL(10, 2);
 
 -- Atribuindo valores
 SELECT @Nome_Funcionario = F.Nome, @Salario = F.Salario
