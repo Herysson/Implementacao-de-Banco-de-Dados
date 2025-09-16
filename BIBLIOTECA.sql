@@ -4,7 +4,8 @@ BEGIN
 END
 GO
 
-USER BIBLIOTECA;
+USE BIBLIOTECA;
+GO
 
 /*Cria todas as tabelas do banco de dados  - Categoria - Autor - Editora - Livro - LivroAutor*/
 CREATE TABLE [Categoria] (
@@ -208,4 +209,5 @@ and livroautor.fk_livro = livro.isbn
 and categoria.tipo_categoria in ('Humor', 'Fic��o Cient�fica')
 and livro.ano between 2000 and 2015
 order by livro.ano;
+
 
