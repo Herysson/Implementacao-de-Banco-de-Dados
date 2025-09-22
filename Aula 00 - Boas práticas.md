@@ -1,6 +1,6 @@
 ## Padrões e Boas Práticas de Nomenclatura em SQL Server
 
-Ao desenvolver em SQL para o SQL Server, a ausência de um padrão de nomenclatura oficial e obrigatório da Microsoft abre espaço para a adoção de convenções que visam a clareza, consistência e manutenibilidade do código. Embora não haja uma regra única, a comunidade de desenvolvedores e administradores de banco de dados consolidou um conjunto de boas práticas amplamente aceito.
+Ao desenvolver em SQL, a ausência de um padrão de nomenclatura oficial e obrigatório da Microsoft abre espaço para a adoção de convenções que visam a clareza, consistência e manutenibilidade do código. Embora não haja uma regra única, a comunidade de desenvolvedores e administradores de banco de dados consolidou um conjunto de boas práticas amplamente aceito.
 
 A regra de ouro é: **escolha um padrão e seja consistente em todo o projeto.**
 
