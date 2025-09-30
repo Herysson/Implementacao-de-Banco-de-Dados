@@ -240,5 +240,3 @@ Após executar o script acima, você pode verificar o estado do banco de dados:
 
 5. **Kroenke, D. M., & Auer, D.** (2013). *Database Concepts*. 7th Edition. Pearson.
    - Esse livro cobre os fundamentos de bancos de dados, com ênfase em como transações e ACID são usados para manter a integridade dos dados em ambientes multiusuário.
-
-Essas fontes oferecem tanto a teoria básica quanto exemplos práticos sobre transações em bancos de dados e propriedades ACID, reforçando o conteúdo discutido na aula.
