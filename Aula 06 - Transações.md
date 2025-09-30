@@ -170,10 +170,61 @@ COMMIT TRANSACTION;
 SELECT * FROM FUNCIONARIO WHERE Cpf = '55544433322';
 ```
 
+### 4. **Exemplo de `SAVEPOINT` para Reversão Parcial**
+
+O comando `SAVEPOINT` (ou `SAVE TRANSACTION`) define um ponto de salvamento dentro de uma transação. [cite\_start]Isso permite reverter apenas uma parte das operações realizadas, sem a necessidade de desfazer a transação inteira[cite: 64, 152].
+
+**Cenário:** Vamos adicionar um novo departamento à empresa. Em seguida, tentaremos cadastrar um funcionário para esse novo departamento. Usaremos um `SAVEPOINT` após a criação do departamento para que, se decidirmos não manter o funcionário, possamos reverter apenas a inserção do funcionário, mas ainda assim manter o novo departamento.
+
+```sql
+-- Inicia a transação
+BEGIN TRANSACTION;
+
+-- 1. Primeira operação: Inserir um novo departamento.
+-- Esta operação será permanente se a transação for confirmada.
+INSERT INTO DEPARTAMENTO (Dnome, Dnumero, Cpf_gerente, Data_inicio_gerente)
+VALUES ('Marketing', 9, NULL, NULL);
+
+-- 2. Criar um ponto de salvamento (savepoint) após a primeira operação.
+[cite_start]SAVE TRANSACTION PontoDeSalvamento; [cite: 145]
+
+-- 3. Segunda operação: Inserir um novo funcionário para o departamento de Marketing.
+-- Esta operação é experimental e poderá ser desfeita.
+INSERT INTO FUNCIONARIO (Pnome, Minicial, Unome, Cpf, Datanasc, Endereco, Sexo, Salario, Cpf_supervisor, Dnr)
+VALUES ('Julia', 'M', 'Santos', '99988877766', '1992-08-10', 'Rua das Ideias, 789', 'F', 3800, NULL, 9);
+
+-- 4. Suponha que decidimos não prosseguir com a contratação de Julia.
+-- Vamos reverter a transação APENAS até o ponto de salvamento.
+-- Isso irá desfazer a inserção da funcionária Julia, mas manterá a criação do departamento de Marketing.
+ROLLBACK TRANSACTION PontoDeSalvamento;
+
+-- 5. Confirmar (COMMIT) o restante da transação.
+-- Apenas a criação do departamento de Marketing será salva permanentemente.
+COMMIT TRANSACTION;
+
+```
+
+#### Verificação do Resultado
+
+Após executar o script acima, você pode verificar o estado do banco de dados:
+
+1.  **O departamento "Marketing" existirá:**
+
+    ```sql
+    SELECT * FROM DEPARTAMENTO WHERE Dnome = 'Marketing';
+    ```
+
+    *(Esta consulta retornará a linha do departamento de Marketing)*
+
+2.  **A funcionária "Julia" não existirá:**
+
+    ```sql
+    SELECT * FROM FUNCIONARIO WHERE Pnome = 'Julia';
+    ```
+
+    *(Esta consulta não retornará nenhum resultado, pois sua inserção foi revertida pelo `ROLLBACK` ao `SAVEPOINT`)*
+
 ## Referências:
-
-Claro! Aqui estão algumas referências que podem apoiar o conteúdo abordado:
-
 1. **Elmasri, R., & Navathe, S. B.** (2016). *Sistemas de Banco de Dados*. 6ª edição. Pearson.  
    - Este livro oferece uma base sólida sobre transações, propriedades ACID e detalhes sobre gerenciamento de transações em sistemas de banco de dados.
 
