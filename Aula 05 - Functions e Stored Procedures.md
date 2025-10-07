@@ -282,8 +282,18 @@ GO
 
 ## Referências
 
-* Microsoft Learn — **User-Defined Functions** (SQL Server)
-* Microsoft Learn — **Stored Procedures** (SQL Server)
-* Materiais e exemplos da disciplina
+1. **Elmasri, R., & Navathe, S. B.** (2016). *Sistemas de Banco de Dados*. 6ª edição. Pearson.  
+
+2. **Silberschatz, A., Korth, H., & Sudarshan, S.** (2019). *Sistemas de Banco de Dados*. 7ª edição. McGraw-Hill.
+
+3. **Microsoft SQL Server Documentation**. *User-Defined Functions (Database Engine)*. Disponível em:
+   [https://learn.microsoft.com/en-us/sql/relational-databases/user-defined-functions/user-defined-functions](https://learn.microsoft.com/en-us/sql/relational-databases/user-defined-functions/user-defined-functions)
+     
+4. **Microsoft SQL Server Documentation**. *Stored Procedures (Database Engine)*. Disponível em:
+   [https://learn.microsoft.com/en-us/sql/relational-databases/stored-procedures/stored-procedures-database-engine](https://learn.microsoft.com/en-us/sql/relational-databases/stored-procedures/stored-procedures-database-engine)
+
+5. **Connolly, T. & Begg, C.** (2015). *Database Systems: A Practical Approach to Design, Implementation, and Management*. 6th edition. Pearson.
+
+6. **Kroenke, D. M., & Auer, D.** (2013). *Database Concepts*. 7th Edition. Pearson.
 
 ---
