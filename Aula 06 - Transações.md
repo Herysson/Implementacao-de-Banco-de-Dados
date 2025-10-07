@@ -132,15 +132,21 @@ Aqui, usaremos um exemplo com `SET TRANSACTION ISOLATION LEVEL` para definir o n
 ```sql
 -- Transação 1: Definindo nível de isolamento para SERIALIZABLE
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-BEGIN TRANSACTION;
+BEGIN TRAN;
 
--- Tentativa de selecionar todos os funcionários
-SELECT * FROM FUNCIONARIO;
+SELECT * 
+FROM dbo.FUNCIONARIO;
 
--- Neste ponto, a transação 2 tentará inserir um novo funcionário, mas será bloqueada
-WAITFOR DELAY '00:00:10'; -- Simulando uma pausa
+-- Marca o momento em que o SELECT terminou (aparece já no Results/Messages)
+PRINT 'SELECT concluído em: ' + CONVERT(varchar(23), SYSDATETIME(), 121);
+RAISERROR('Segurando locks por 10s...', 0, 1) WITH NOWAIT;
 
-COMMIT TRANSACTION;
+-- Pausa de 20 segundos com a transação aberta (locks mantidos)
+WAITFOR DELAY '00:00:20';
+
+COMMIT TRAN;
+PRINT 'COMMIT em: ' + CONVERT(varchar(23), SYSDATETIME(), 121);
+
 
 -- Transação 2: Tentativa de inserção será bloqueada até a transação 1 ser finalizada
 BEGIN TRANSACTION;
@@ -223,6 +229,123 @@ Após executar o script acima, você pode verificar o estado do banco de dados:
     ```
 
     *(Esta consulta não retornará nenhum resultado, pois sua inserção foi revertida pelo `ROLLBACK` ao `SAVEPOINT`)*
+
+## 4. **TRY…CATCH**
+
+É um “cinto de segurança” do SQL Server: você coloca o código no **TRY**; se der erro, o SQL **pula** para o **CATCH**, onde você decide o que fazer (avisar, desfazer, registrar, etc.).
+
+#### Por que usar?
+
+* Evitar que seu script pare “no susto”.
+* **Desfazer** mudanças em caso de erro (manter os dados corretos).
+* Escrever **mensagens claras** de erro para quem for depurar.
+
+### A estrutura básica
+
+```sql
+BEGIN TRY
+  -- coisas que podem dar erro
+END TRY
+BEGIN CATCH
+  -- o que fazer se deu erro
+END CATCH
+```
+
+#### Como funciona o fluxo
+
+1. O SQL executa o que está dentro do **TRY**.
+2. Se **não** houver erro → o **CATCH** é ignorado.
+3. Se **houver** erro → o SQL **interrompe** o TRY e **salta** para o CATCH.
+4. No CATCH você tem funções úteis como:
+
+   * `ERROR_NUMBER()`, `ERROR_MESSAGE()`, `ERROR_LINE()`
+   * `XACT_STATE()` → diz o estado da transação (se dá pra `COMMIT` ou só `ROLLBACK`).
+
+### Exemplo simples (sem transação)
+
+```sql
+BEGIN TRY
+  SELECT 1 / 0;  -- erro proposital (divisão por zero)
+  PRINT 'Não chegarei aqui';
+END TRY
+BEGIN CATCH
+  PRINT 'Deu erro!';
+  PRINT 'Número: ' + CAST(ERROR_NUMBER() AS varchar(10));
+  PRINT 'Mensagem: ' + ERROR_MESSAGE();
+END CATCH;
+```
+
+O SQL pula pro CATCH e mostra as infos do erro.
+
+### Exemplo prático com transação
+
+Quando mexemos em dados (INSERT/UPDATE/DELETE), usamos transação para garantir **tudo-ou-nada**.
+
+```sql
+BEGIN TRY
+  BEGIN TRAN;  -- começa a transação
+
+  UPDATE dbo.FUNCIONARIO
+  SET Salario = Salario * 1.02
+  WHERE Dnr = 1;
+
+  -- Força um erro só para demonstrar
+  SELECT 1/0;
+
+  COMMIT;  -- não será executado porque houve erro acima
+END TRY
+BEGIN CATCH
+  -- Se ainda houver transação ativa, desfaz
+  IF XACT_STATE() <> 0
+      ROLLBACK;
+
+  -- Mostra o que aconteceu
+  DECLARE @msg nvarchar(4000) =
+    CONCAT('Erro ', ERROR_NUMBER(), ' na linha ', ERROR_LINE(), ': ', ERROR_MESSAGE());
+  PRINT @msg;
+
+  -- Opcional: relançar o erro
+  -- THROW;
+END CATCH;
+```
+
+### O que é `XACT_STATE()`?
+
+* **1** → há transação **ativa e “comitável”** (tecnicamente daria pra `COMMIT`, mas após erro geralmente fazemos `ROLLBACK`).
+* **-1** → transação **incomitável** (corrompida); **só** `ROLLBACK` funciona.
+* **0** → não há transação ativa.
+
+### E o `XACT_ABORT ON`?
+
+* Se você liga `XACT_ABORT ON`, a maioria dos erros de runtime faz a transação ficar **incomitável** (estado -1).
+* É útil para garantir rollback automático em erros mais chatos (ex.: timeouts, violação de FK), mas **sempre** cheque a política do seu projeto.
+
+```sql
+SET XACT_ABORT ON;
+BEGIN TRY
+  BEGIN TRAN;
+  -- seus DMLs aqui...
+  COMMIT;
+END TRY
+BEGIN CATCH
+  IF XACT_STATE() <> 0 ROLLBACK;
+  THROW; -- reenvia o erro
+END CATCH;
+```
+
+### Boas práticas (bem resumidas)
+
+* Sempre que fizer DML “de verdade”, use **TRY…CATCH + TRANSAÇÃO**.
+* No CATCH, **tente reverter** (`ROLLBACK`) se ainda houver transação.
+* Logue `ERROR_NUMBER()`, `ERROR_MESSAGE()`, `ERROR_LINE()`.
+* Evite “engolir” o erro: use `THROW;` para não esconder problemas.
+
+### Erros comuns de iniciante
+
+* Esquecer o `BEGIN TRAN` (aí não tem o que reverter).
+* Tentar `COMMIT` depois de um erro sem checar `XACT_STATE()` (pode estar incomitável).
+* “Sumir” com o erro (não dar `THROW`/log), dificultando depuração.
+
 
 ## Referências:
 1. **Elmasri, R., & Navathe, S. B.** (2016). *Sistemas de Banco de Dados*. 6ª edição. Pearson.  
