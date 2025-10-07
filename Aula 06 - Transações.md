@@ -170,7 +170,7 @@ COMMIT TRANSACTION;
 SELECT * FROM FUNCIONARIO WHERE Cpf = '55544433322';
 ```
 
-### 4. **Exemplo de `SAVEPOINT` para Reversão Parcial**
+### 5. **Exemplo de `SAVEPOINT` para Reversão Parcial**
 
 O comando `SAVEPOINT` (ou `SAVE TRANSACTION`) define um ponto de salvamento dentro de uma transação. [cite\_start]Isso permite reverter apenas uma parte das operações realizadas, sem a necessidade de desfazer a transação inteira[cite: 64, 152].
 
