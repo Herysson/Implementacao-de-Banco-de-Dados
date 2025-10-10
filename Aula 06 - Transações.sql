@@ -219,4 +219,78 @@ BEGIN
     PRINT 'Transação concluída com sucesso.';
 END
 
---
+-- Aula 10-2025
+BEGIN TRAN;
+
+DECLARE @registroAfetado INT = 0;
+UPDATE FUNCIONARIO
+SET Salario = 30000
+WHERE Pnome = 'Carlos' AND Unome = 'Silva';
+SET @registroAfetado = @@ROWCOUNT + @registroAfetado;
+IF @registroAfetado <> 1
+BEGIN
+	ROLLBACK TRAN;
+	PRINT 'Alteração NÃO realizada'
+END;
+ELSE
+BEGIN
+	COMMIT TRANSACTION;
+	PRINT 'Alteração realizada com sucesso!'
+END
+-- 
+
+-- SAVE POINT
+BEGIN TRAN;
+
+INSERT INTO DEPARTAMENTO (Dnome, Dnumero)
+VALUES ('Marketing', 88);
+
+SAVE TRAN dptOk;
+
+INSERT INTO DEPARTAMENTO (Dnome, Dnumero)
+VALUES ('Construção', 99);
+ROLLBACK TRAN dptOk;
+COMMIT TRANSACTION
+
+SELECT * FROM DEPARTAMENTO;
+
+
+--TRY CATCH
+
+BEGIN TRY
+	PRINT 'Ola mundo'
+	SELECT 1/0; -- erro
+	PRINT 'Não cheguei aqui'
+END TRY
+BEGIN CATCH
+	PRINT 'DEU ERRO!';
+	PRINT 'Número: ' + CAST(ERROR_NUMBER() AS VARCHAR(10));
+	PRINT 'Mensagem: ' + ERROR_MESSAGE();
+END CATCH
+
+-- TRANSACTION - TRY CATCH
+BEGIN TRY
+	BEGIN TRAN;
+	UPDATE FUNCIONARIO
+	SET Salario	 = 666666
+	WHERE Cpf = 98765432168
+	
+	SELECT * FROM FUNCIONARIO WHERE Cpf = '98765432168';
+	
+	UPDATE FUNCIONARIO
+	SET Dnr	 = 666
+	WHERE Cpf = 98765432168
+	
+	SELECT * FROM FUNCIONARIO WHERE Cpf = '98765432168';
+	
+	COMMIT TRAN
+	PRINT 'Pacto com demonio realizado!'
+END TRY
+BEGIN CATCH
+    -- Verifica se a trasanção esta em aberto
+	IF XACT_STATE() <> 0
+		ROLLBACK TRAN;
+	PRINT 'Número: ' + CAST(ERROR_NUMBER() AS VARCHAR(10));
+	PRINT 'Mensagem: ' + ERROR_MESSAGE();
+END CATCH
+
