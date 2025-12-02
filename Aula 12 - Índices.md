@@ -127,17 +127,209 @@ END;
 ---
 
 
-## **7. Exercícios**
+## **7. Atividade prática: Importando dados JSON e criando índices**
 
-1. Crie uma tabela chamada `Vendas` com as colunas:
-   - `VendaID` (int, PK), `Produto` (nvarchar), `Valor` (decimal), `DataVenda` (date).
-   - Adicione um índice clusterizado e dois não clusterizados em colunas diferentes.
+Nesta atividade, você irá:
 
-2. Insira 1.000 registros na tabela `Vendas` com valores randômicos e compare a performance da consulta:
+* Importar dados a partir de um arquivo **JSON** para uma tabela no SQL Server.
+* Executar consultas com **ORDER BY**.
+* Criar **índices** adequados e comparar a performance das consultas **com e sem índices**.
+
+O objetivo é entender, na prática, **quando faz sentido criar índices** em tabelas com muitos registros.
+
+> O professor fornecerá um arquivo JSON com uma lista de pessoas, contendo campos como: `nome`, `cidade`, `estado` e `cpf`.
+
+---
+
+### **7.1. Criar a tabela de trabalho**
+
+Crie uma tabela chamada `PessoasResumo` contendo apenas os campos relevantes para a atividade:
+
 ```sql
-SELECT * 
-FROM Vendas
-WHERE Valor > 100;
+CREATE TABLE Pessoa (
+    Id     INT IDENTITY(1,1) PRIMARY KEY,
+    Nome   VARCHAR(150),
+    Cidade VARCHAR(100),
+    Estado CHAR(2),
+    CPF    VARCHAR(14) -- formato: 000.000.000-00
+);
 ```
 
-3. Explique em um breve parágrafo o impacto do uso de índices em tabelas grandes versus tabelas pequenas.
+---
+
+### **7.2. Importar os dados a partir de um arquivo JSON**
+
+Considere que o arquivo JSON (por exemplo: `pessoas.json`) está salvo em um local acessível ao SQL Server, e possui uma estrutura semelhante a:
+
+```json
+[
+  {
+    "nome": "Ana Silva",
+    "cidade": "Santa Maria",
+    "estado": "RS",
+    "cpf": "000.000.000-00"
+  },
+  {
+    "nome": "Bruno Souza",
+    "cidade": "Porto Alegre",
+    "estado": "RS",
+    "cpf": "111.111.111-11"
+  }
+]
+```
+
+> Atenção: o arquivo deve estar em **UTF-8** para evitar problemas com acentuação.
+
+Use o script abaixo para carregar o JSON em uma variável e, em seguida, inserir os dados na tabela:
+
+```sql
+DECLARE @json NVARCHAR(MAX);
+
+SELECT @json = BulkColumn
+FROM OPENROWSET(
+        BULK 'C:\dados\pessoas.json',   -- ajuste o caminho conforme o seu ambiente
+        SINGLE_CLOB,
+        CODEPAGE = '65001'              -- UTF-8
+     ) AS j;
+
+INSERT INTO Pessoa (Nome, Cidade, Estado, CPF)
+SELECT
+    Nome,
+    Cidade,
+    Estado,
+    CPF
+FROM OPENJSON(@json)
+WITH (
+    Nome   VARCHAR(150) '$.nome',
+    Cidade VARCHAR(100) '$.cidade',
+    Estado CHAR(2)      '$.estado',
+    CPF    VARCHAR(14)  '$.cpf'
+);
+```
+
+Após a importação, confira:
+
+```sql
+SELECT TOP 10 *
+FROM Pessoa;
+```
+
+---
+
+### **7.3. Popular a tabela com muitos registros (simulação)**
+
+Para simular um cenário com muitos dados (por exemplo, **300.000 registros**), você pode duplicar os dados várias vezes com um script de inserção em loop, se o professor julgar adequado.
+*(Opcional — o professor pode fornecer um script pronto de carga em massa.)*
+
+---
+
+### **7.4. Consultas sem índices específicos**
+
+Ative as estatísticas de tempo e IO para medir a performance **sem índices**:
+
+```sql
+SET STATISTICS IO ON;
+SET STATISTICS TIME ON;
+
+SELECT Nome, Cidade, Estado, CPF
+FROM PessoasResumo
+ORDER BY Nome, Estado;
+
+SET STATISTICS IO OFF;
+SET STATISTICS TIME OFF;
+```
+
+Anote:
+
+* Tempo de execução (`elapsed time`).
+* Leituras lógicas (`logical reads`) mostradas na aba **Messages**.
+
+---
+
+### **7.5. Criação de índices para otimizar a ordenação**
+
+Agora, crie um índice **não clusterizado** que ajude nas consultas que ordenam por `Nome` e `Estado`.
+
+#### Opção 1: índice focado em filtro por Estado e ordenação por Nome
+
+Se você costuma filtrar por estado, por exemplo:
+
+```sql
+SELECT Nome, Cidade, Estado, CPF
+FROM PessoasResumo
+WHERE Estado = 'RS'
+ORDER BY Nome, Estado;
+```
+
+crie o índice:
+
+```sql
+CREATE NONCLUSTERED INDEX IX_Pessoas_Estado_Nome
+ON PessoasResumo (Estado, Nome);
+```
+
+#### Opção 2: índice focado apenas na ordenação global por Nome, Estado
+
+Se a consulta mais comum é só:
+
+```sql
+SELECT Nome, Cidade, Estado, CPF
+FROM PessoasResumo
+ORDER BY Nome, Estado;
+```
+
+poderia ser usado:
+
+```sql
+CREATE NONCLUSTERED INDEX IX_Pessoas_Nome_Estado
+ON PessoasResumo (Nome, Estado);
+```
+
+> Para a atividade, o professor pode indicar qual das duas opções utilizar ou pedir para os alunos testarem as duas e compararem.
+
+---
+
+### **7.6. Repetir as consultas e comparar a performance**
+
+Repita as mesmas consultas da etapa 8.4, agora com o índice criado:
+
+```sql
+SET STATISTICS IO ON;
+SET STATISTICS TIME ON;
+
+SELECT Nome, Cidade, Estado, CPF
+FROM PessoasResumo
+ORDER BY Nome, Estado;
+
+SET STATISTICS IO OFF;
+SET STATISTICS TIME OFF;
+```
+
+Compare:
+
+* O tempo de execução antes e depois do índice.
+* As leituras lógicas (`logical reads`).
+
+---
+
+### **7.7. Entregáveis da atividade**
+
+Cada grupo/aluno deve entregar:
+
+1. **Scripts SQL**, contendo:
+
+   * `CREATE TABLE` da tabela `PessoasResumo`.
+   * Script de importação do JSON (`OPENROWSET` + `OPENJSON`).
+   * Criação dos índices.
+   * Consultas utilizadas para teste.
+
+2. **Relatório curto (1–2 páginas)** respondendo:
+
+   * O que aconteceu com o tempo de execução das consultas depois da criação do índice?
+   * Houve redução no número de leituras lógicas? Justifique com base nos dados de `SET STATISTICS IO`.
+   * Em quais situações **vale a pena** criar índices para consultas com `ORDER BY`?
+   * Qual o impacto potencial de muitos índices nas operações de escrita (`INSERT`, `UPDATE`, `DELETE`)?
+
+3. **(Opcional)**: Testar um segundo índice com outra combinação de colunas e comparar o resultado (por exemplo, primeiro `Nome, Estado` e depois `Estado, Nome`).
+
+
