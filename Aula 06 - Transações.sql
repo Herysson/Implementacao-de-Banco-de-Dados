@@ -294,3 +294,181 @@ BEGIN CATCH
 	PRINT 'Mensagem: ' + ERROR_MESSAGE();
 END CATCH
 
+===== EXEMPLO 2026
+
+CREATE DATABASE CAIXA;
+
+USE CAIXA;
+-- Criação da nossa tabela.
+CREATE TABLE conta(
+	id INT PRIMARY KEY,
+	Nome VARCHAR(50),
+	Saldo MONEY
+);
+
+INSERT INTO CONTA
+VALUES	(10, 'Maria', 500),
+		(20, 'João', 1500),
+		(30, 'Paulo', 30000),
+		(40, 'Maria', 50000);
+GO;
+-- Primeira transação
+BEGIN TRAN;
+	DECLARE @erro INT = 0;
+	INSERT INTO CONTA
+	VALUES	(50, 'Pedro', 50);
+	SET @erro = @erro+ @@ERROR
+	INSERT INTO CONTA
+	VALUES	(10, 'Judas', 666);
+	SET @erro = @erro+ @@ERROR
+	SELECT * FROM CONTA;
+	IF @erro <> 0
+	BEGIN
+		PRINT 'Transação revertida;'
+		ROLLBACK TRAN;
+	END
+	ELSE 
+	BEGIN
+		PRINT 'Transação realida com sucesso!'
+		COMMIT TRAN;
+	END
+SELECT * FROM CONTA;
+GO
+
+BEGIN TRAN;
+UPDATE conta
+SET Saldo = saldo+10000
+WHERE Nome = 'Maria';
+IF @@ROWCOUNT <> 1
+BEGIN
+	SELECT * FROM conta;
+	ROLLBACK TRAN;
+	SELECT * FROM conta;
+END
+ELSE
+	COMMIT TRAN;
+GO;
+
+-- Tranferir dinheiro de uma pessoa para outra:
+CREATE OR ALTER PROCEDURE usp_transferencia 
+	@id_origem INT,
+	@id_destino INT,
+	@valor MONEY
+AS
+BEGIN
+	BEGIN TRAN;
+	DECLARE @saldo_origem MONEY;
+	--Tirando dinheiro da conta de origem
+	UPDATE conta
+	SET Saldo = Saldo - @valor
+	WHERE id = @id_origem;
+	--Depositar na conta destino
+	UPDATE conta
+	SET Saldo = Saldo + @valor
+	WHERE id = @id_destino;
+	--Ver possível estado da tabela conta
+	SELECT * FROM conta;
+	SELECT @saldo_origem = saldo FROM conta WHERE id = @id_origem;
+	--Condição para rollback
+	IF @saldo_origem < 0
+	BEGIN
+		ROLLBACK TRAN;
+		PRINT 'Saldo insuficiente!'
+		SELECT * FROM conta;
+	END
+	--Condição para commit
+	ELSE
+	BEGIN
+		COMMIT TRAN
+		PRINT 'TransferÊncia realizada!'
+	END	
+END
+GO 
+SELECT * FROM conta;
+
+EXEC usp_transferencia 40,10,500;
+
+EXEC usp_transferencia 10,20,2000;
+SELECT * FROM conta;
+
+GO
+-- Save point
+BEGIN TRAN;
+INSERT INTO conta
+VALUES (50, 'Pedro', 50);
+-- save point
+SAVE TRAN pedroOK
+INSERT INTO conta
+VALUES (10, 'Juca', -200);
+IF @@ERROR <> 0 
+BEGIN
+	ROLLBACK TRAN pedroOK;
+	COMMIT TRAN;
+	PRINT 'Voltamos para o save point';
+END
+ELSE 
+	COMMIT TRAN;
+SELECT * FROM conta;
+GO
+
+-- TRY CATCH
+BEGIN TRY
+	PRINT 'Olá TRY CATCH!';
+	SELECT 1/0; -- erro;
+	PRINT 'NÃO CHEGUEI AQUI!'
+END TRY
+BEGIN CATCH
+	PRINT 'DEU ERRO!'
+	PRINT 'Número: ' +  CAST(ERROR_NUMBER() AS VARCHAR(10));
+	PRINT 'Mensagem de ERRO: '+ ERROR_MESSAGE();
+END CATCH
+-- TRANSACTION + TRY CATCH
+BEGIN TRAN;
+	BEGIN TRY
+		INSERT INTO conta
+		VALUES (60, 'Mateus', 15);
+		SELECT * FROM conta;
+		INSERT INTO conta
+		VALUES (10, 'Juca', -200);
+		COMMIT TRAN;
+		SELECT * FROM conta;
+	END TRY
+	BEGIN CATCH
+		ROLLBACK TRAN;
+		PRINT 'ERRO'
+		PRINT 'Número: ' +  CAST(ERROR_NUMBER() AS VARCHAR(10));
+		PRINT 'Mensagem de ERRO: '+ ERROR_MESSAGE();
+	END CATCH
+SELECT * FROM conta;
+
+GO
+-- Iserir um novo usário no banco (não permita nomes duplicados).
+CREATE PROCEDURE usp_cria_conta @id INT, @nome VARCHAR(50), @saldo MONEY
+AS 
+BEGIN
+	BEGIN TRAN;
+	BEGIN TRY
+		INSERT INTO conta
+		VALUES (@id, @nome, @saldo)
+		IF (SELECT COUNT(*) FROM conta WHERE nome = @nome)>1
+		BEGIN
+			ROLLBACK TRAN;
+			PRINT 'Ja existe alguém com o nome: ' + @nome;
+		END
+		ELSE 
+		BEGIN
+			COMMIT TRAN
+			PRINT 'Cadastro realizado com sucesso'
+		END
+	END TRY
+	BEGIN CATCH
+		ROLLBACK TRAN;
+		PRINT 'ERRO'
+		PRINT 'Número: ' +  CAST(ERROR_NUMBER() AS VARCHAR(10));
+		PRINT 'Mensagem de ERRO: '+ ERROR_MESSAGE();
+	END CATCH
+END
+GO
+EXEC usp_cria_conta 100,'Tiago',600;
+SELECT * FROM conta;
+
