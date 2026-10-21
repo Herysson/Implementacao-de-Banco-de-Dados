@@ -341,5 +341,198 @@ BEGIN
     END
 END;
 GO
+--20/10/2026
 
+-- TRIGGER AFTER_INSERT
+CREATE TRIGGER trg_after_insert_departamento
+ON DEPARTAMENTO
+AFTER INSERT
+AS
+BEGIN
+	PRINT 'Olá meu primeiro trigger =D'
+END;
+GO
+-- DROPAR UM TRIGGER
+DROP TRIGGER trg_after_insert_departamento;
+GO;
+-- TRIGGER INSTEAD OF INSERT
+CREATE OR ALTER TRIGGER trg_io_insert_departamento
+ON DEPARTAMENTO
+INSTEAD OF INSERT
+AS
+BEGIN
+	DECLARE @nome VARCHAR(40);
+	SELECT @nome = I.Dnome
+	FROM inserted AS I;
+	IF EXISTS (SELECT 1 FROM DEPARTAMENTO WHERE Dnome = @nome)
+		RAISERROR('Já existe esse departamento',16,1)
+	ELSE
+		INSERT INTO DEPARTAMENTO (Dnome, Dnumero, Cpf_gerente, Data_inicio_gerente)
+		SELECT I.Dnome, I.Dnumero, I.Cpf_gerente, I.Data_inicio_gerente
+		FROM inserted AS I;
+END;
+GO
+-- DESABILITAR / HABILITAR TRIGGER -- DISABLE - ENABLE
+ALTER TABLE DEPARTAMENTO
+DISABLE TRIGGER trg_after_insert_departamento;
 
+INSERT INTO DEPARTAMENTO (Dnome,Dnumero)
+VALUES ('Expedição', 66);
+SELECT * FROM DEPARTAMENTO;
+
+-- VERFICAR TRIGGERS EM UM TABELA
+EXEC sp_helptrigger DEPARTAMENTO;
+
+-- VERIFICAR TRIGGERS NO BANCO DE DADOS
+SELECT *
+FROM sys.triggers
+WHERE is_disabled = 0 or is_disabled =1;
+GO
+
+-- FUNÇÃO UPDATE()
+--Verifiando se o nome do departamento foi alterado
+CREATE OR ALTER TRIGGER trg_aftter_update_nome
+ON DEPARTAMENTO
+FOR UPDATE
+AS
+BEGIN
+	DECLARE @antigo VARCHAR(50),
+			@novo VARCHAR(50);
+	SELECT @antigo = D.Dnome FROM deleted AS D;
+	SELECT @novo = I.Dnome FROM inserted AS I;
+	IF UPDATE(Dnome)
+	BEGIN
+		PRINT 'O nome antigo era: ' + @antigo;
+		PRINT 'O novo nome é: ' + @novo;
+	END
+	ELSE
+		PRINT 'O nome não foi modificado'
+END
+
+UPDATE DEPARTAMENTO
+SET Dnome = 'Recursos Humanos'
+WHERE Dnome = 'RH';
+SELECT * FROM DEPARTAMENTO;
+UPDATE DEPARTAMENTO
+SET Dnumero = 9
+WHERE Dnome = 'Expedição';
+
+UPDATE DEPARTAMENTO
+SET Dnome = 'Informática'
+WHERE Dnome = 'TI';
+GO
+
+-- Impedir que um funcinário receba menos de 1000 reais
+CREATE TRIGGER trg_after_insert_sal_func
+ON FUNCIONARIO
+FOR INSERT
+AS
+BEGIN
+	DECLARE @salario DECIMAL(10,2);
+	SELECT @salario = I.Salario
+	FROM inserted AS I
+	IF(@salario < 1000)
+	BEGIN
+		ROLLBACK;
+		RAISERROR('Salário não pode ser <1000,00',16,1);
+	END
+END
+
+INSERT INTO FUNCIONARIO (Pnome,Unome,Cpf,Datanasc,Endereco,Sexo,Salario,Bonus,Data_Admissao,Dnr)
+VALUES ('Herysson', 'Figueiredo','0184447778','1988-06-07','Rua Sete', 'M', 1800, 0, '2026-10-20',9);
+
+SELECT * FROM FUNCIONARIO;
+GO
+--CRIAR UMA TABELA DE LOG
+CREATE TABLE LOG_FUNCIONARIO(
+	log_id INT IDENTITY(100,1) PRIMARY KEY,
+	cpf CHAR(11),
+	operacao VARCHAR(10),
+	data_hora DATETIME DEFAULT GETDATE()
+)
+GO
+
+--TRIGGER DE INSERT
+CREATE TRIGGER trg_for_insert_funcionario
+ON FUNCIONARIO
+FOR INSERT
+AS
+BEGIN
+	INSERT INTO LOG_FUNCIONARIO (cpf, operacao)
+	SELECT Cpf, 'INSERT'
+	FROM inserted	
+END
+GO
+
+CREATE TRIGGER trg_for_update_funcionario
+ON FUNCIONARIO
+FOR UPDATE
+AS
+BEGIN
+	INSERT INTO LOG_FUNCIONARIO (cpf, operacao)
+	SELECT Cpf, 'UPDATE'
+	FROM inserted	
+END
+GO
+
+CREATE TRIGGER trg_for_delete_funcionario
+ON FUNCIONARIO
+FOR DELETE
+AS
+BEGIN
+	INSERT INTO LOG_FUNCIONARIO (cpf, operacao)
+	SELECT Cpf, 'DELETE'
+	FROM deleted	
+END
+
+INSERT INTO FUNCIONARIO (Pnome,Unome,Cpf,Datanasc,Endereco,Sexo,Salario,Bonus,Data_Admissao,Dnr)
+VALUES ('Juca', 'Da Silva','4885696','2005-06-07','Rua Cinco', 'M', 1100, 0, '2026-10-20',9);
+SELECT * FROM FUNCIONARIO ORDER BY Pnome;
+SELECT * FROM LOG_FUNCIONARIO;
+
+UPDATE FUNCIONARIO
+SET Salario = 500
+WHERE Cpf='4885696';
+
+DELETE FROM FUNCIONARIO
+WHERE Cpf='4885696';
+
+--1 Criar uma tabela para guardar todas as alteração 
+-- de salário sofridas por um funcióario. Em seguida
+-- crie triggers para guardar nesta tabela informações
+-- sobre essas alteraçõe (id, cpf, salrio anterior, data e hora)
+
+--2 Crie uma nova coluna na tabela departamente chamada de status.
+--Agora crie um trigger que impeça o usuário de deletar um departamento
+--já existente. Ou seja ao invés de deltar o departamento altere o valor 
+--da coluna de status para '0'.
+
+--3 Crie um trigger que seja disparado depois que uma operação de inserção, 
+-- update ou deleção ocorra na tabela FUNCIONARIO. 
+-- Esse trigger deve registrar o CPF do novo funcionário 
+--inserido, alterado ou deletado e a operação realizada ("INSERT, DELETE, UPDATE") 
+-- em uma tabela de log (Log_Funcionario), juntamente com a data e hora da inserção. Esse trigger ajudará a manter um histórico 
+-- das inserções realizadas na tabela de funcionários.
+GO
+
+-- VIEW
+CREATE VIEW vw_rh_funcionario_dpt
+AS
+SELECT 
+	CONCAT(Pnome,' ',Minicial,'. ', Unome) AS 'Nome',
+	DATEDIFF(YEAR, Datanasc, GETDATE()) AS 'Idade',
+	Endereco AS 'Endereço',
+	Data_Admissao AS 'Adimição',
+	D.Dnome AS 'Departamento'
+FROM FUNCIONARIO AS F
+INNER JOIN DEPARTAMENTO AS D
+ON F.Dnr = D.Dnumero;
+GO
+
+SELECT * 
+FROM vw_rh_funcionario_dpt
+ORDER BY Nome;
+
+SELECT * 
+FROM vw_rh_funcionario_dpt
+WHERE Nome LIKE '%B.%';
