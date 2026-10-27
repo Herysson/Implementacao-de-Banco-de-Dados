@@ -141,3 +141,157 @@ FROM sys.database_role_members roles
 	JOIN sys.database_principals p ON roles.member_principal_id = p.principal_id
 	JOIN sys.database_principals pp ON roles.role_principal_id = pp.principal_id
 ORDER BY 1
+
+--02-26
+
+/*
+ AULA 11 - GERENCIAMENTO DE ACESSOS (SQL SERVER)
+ Exemplo: operador de cadastro da loja
+ Banco preexistente: AULA08_LOJA (Aula 08)
+ Tabela utilizada: dbo.PRODUTO
+
+ Conteudos: CREATE LOGIN, CREATE USER, GRANT, DENY, REVOKE,
+            EXECUTE AS USER e REVERT.
+
+ PRE-REQUISITOS:
+ - Execute antes o arquivo Aula_08_Restricoes_Integridade_Loja.sql.
+ - Execute esta aula usando uma conta com permissoes para criar logins,
+   criar usuarios e gerenciar permissoes no banco.
+ - A senha e apenas para ambiente didatico; nao reutilize em producao.
+
+ Este script NAO exclui nem recria o banco AULA08_LOJA.
+ Os testes de INSERT sao revertidos para nao alterar os dados da loja.
+*/
+
+-- 1. LOGIN: identidade autenticavel no servidor SQL Server.
+USE master;
+GO
+
+IF DB_ID('AULA08_LOJA') IS NULL
+    THROW 50001, 'Execute primeiro o script da Aula 08.', 1;
+GO
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.server_principals WHERE name = 'operador_loja'
+)
+BEGIN
+    CREATE LOGIN operador_loja
+    WITH PASSWORD = 'Aula11#Perm2026_SQL',
+         CHECK_POLICY = ON,
+         DEFAULT_DATABASE = AULA08_LOJA;
+END;
+GO
+
+-- 2. USER: vincula o login ao banco AULA08_LOJA.
+USE AULA08_LOJA;
+GO
+
+IF USER_ID('operador_loja') IS NULL
+BEGIN
+    CREATE USER operador_loja FOR LOGIN operador_loja;
+END;
+GO
+
+-- Reinicializa somente as permissoes deste usuario nessa tabela,
+-- para que o exemplo possa ser executado novamente.
+REVOKE SELECT, INSERT, DELETE ON dbo.PRODUTO FROM operador_loja;
+GO
+
+-- 3. GRANT: o operador pode consultar e inserir produtos.
+GRANT SELECT, INSERT ON dbo.PRODUTO TO operador_loja;
+GO
+
+-- 4. DENY: o operador nao pode excluir produtos.
+DENY DELETE ON dbo.PRODUTO TO operador_loja;
+GO
+
+-- 5. Teste das permissoes: simular a identidade sem abrir nova conexao.
+-- SELECT e INSERT devem funcionar; ROLLBACK desfaz a insercao de teste.
+BEGIN TRANSACTION;
+EXECUTE AS USER = 'operador_loja';
+
+SELECT IdProduto, Nome, Preco
+FROM dbo.PRODUTO
+ORDER BY IdProduto;
+
+INSERT INTO dbo.PRODUTO
+    (IdProduto, Nome, Preco, Quantidade, IdCategoria)
+VALUES
+    (901, 'Suporte notebook', 59.90, 5, 30);
+
+SELECT IdProduto, Nome, Preco
+FROM dbo.PRODUTO
+WHERE IdProduto = 901;
+
+REVERT;               -- Volta ao usuario administrador.
+ROLLBACK TRANSACTION; -- Desfaz apenas o INSERT de teste.
+GO
+
+-- 6. Teste do DENY DELETE: a exclusao deve ser impedida.
+EXECUTE AS USER = 'operador_loja';
+BEGIN TRY
+    DELETE FROM dbo.PRODUTO WHERE IdProduto = 105;
+END TRY
+BEGIN CATCH
+    PRINT 'DELETE bloqueado: ' + ERROR_MESSAGE();
+END CATCH;
+REVERT;
+GO
+
+-- 7. REVOKE: retirar a permissao de inserir (sem criar um DENY).
+REVOKE INSERT ON dbo.PRODUTO FROM operador_loja;
+GO
+
+-- 8. Teste apos o REVOKE: o INSERT deve falhar.
+EXECUTE AS USER = 'operador_loja';
+BEGIN TRY
+    INSERT INTO dbo.PRODUTO
+        (IdProduto, Nome, Preco, IdCategoria)
+    VALUES (902, 'Base para mouse', 39.90, 30);
+END TRY
+BEGIN CATCH
+    PRINT 'INSERT sem permissao: ' + ERROR_MESSAGE();
+END CATCH;
+REVERT;
+GO
+
+-- 9. Consultar as permissoes explicitas ao final da aula.
+SELECT
+    u.name AS Usuario,
+    p.state_desc AS Estado,
+    p.permission_name AS Permissao,
+    OBJECT_NAME(p.major_id) AS Objeto
+FROM sys.database_permissions AS p
+INNER JOIN sys.database_principals AS u
+    ON p.grantee_principal_id = u.principal_id
+WHERE u.name = 'operador_loja'
+  AND p.class = 1
+  AND p.major_id = OBJECT_ID('dbo.PRODUTO')
+ORDER BY p.permission_name;
+GO
+
+/*
+ RESULTADO FINAL ESPERADO (permissoes explicitas na tabela PRODUTO):
+ - SELECT => GRANT
+ - DELETE => DENY
+ - INSERT => sem permissao explicita, apos REVOKE
+
+ OBSERVACAO: REVOKE nao equivale a DENY. Ele remove a concessao
+ (ou negacao) explicita. O usuario ainda poderia receber a permissao
+ por outra funcao (role) ou outro caminho de autorizacao.
+
+ Para voltar a permitir INSERT:
+     GRANT INSERT ON dbo.PRODUTO TO operador_loja;
+
+ Para retirar a negacao de DELETE:
+     REVOKE DELETE ON dbo.PRODUTO FROM operador_loja;
+
+ Evite adicionar este usuario a db_owner ou db_datawriter durante o
+ exemplo: permissoes herdadas podem mudar o resultado dos testes.
+
+ Para remover o usuario e login depois da aula (executar como admin):
+     USE AULA08_LOJA;
+     DROP USER operador_loja;
+     USE master;
+     DROP LOGIN operador_loja;
+*/
